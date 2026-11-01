@@ -84,7 +84,9 @@ function ReperesVitesse({
           type="button"
           className={`repere repere--${r.cle} ${deuxLignes && i === 1 ? 'repere--bas' : ''}`}
           style={{ left: `${(r.v / V0_MAX) * 100}%` }}
-          aria-label={r.aide(format(r.v))}
+          // Le nom accessible reste le texte visible (« circulaire 6,98 ») ; l'effet du clic est
+          // donné en description (WCAG 2.5.3, « label in name »).
+          aria-description={r.aide(format(r.v))}
           onClick={() => onCaler(r.cle)}
         >
           {fr.lancement[r.cle]} {format(r.v)}
