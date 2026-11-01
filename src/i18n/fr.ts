@@ -73,6 +73,77 @@ export const fr = {
   fins: {
     collision: 'Collision avec le Soleil',
     sortie: 'L’astre s’éloigne pour toujours',
+    contact: 'Contact entre les deux corps',
+    separation: 'Les corps se séparent',
+  },
+
+  scene2: {
+    centreDeMasse: 'centre de masse',
+    masse: (m: string) => `masse ${m}`,
+    depart: (corps: string) => `départ ${corps}`,
+    description: (lies: string, distance: string, temps: string) =>
+      `Simulation de deux corps : ${lies}. Distance entre A et B : ${distance} UA, après ${temps} an.`,
+  },
+
+  presets2: {
+    titre: 'Choisis un duo',
+    massesEgales: 'Masses égales',
+    grosEtPetit: 'Gros et petit (10 : 1)',
+    planeteSoleil: 'Planète – Soleil',
+    visiteur: 'Un visiteur qui passe',
+    orbiteCirculaire: 'Orbite circulaire',
+  },
+
+  lancement2: {
+    corpsA: 'Corps A',
+    corpsB: 'Corps B',
+    masse: (corps: string) => `Masse de ${corps}`,
+    position: 'Position au départ',
+    vitesse: 'Vitesse au départ',
+    x: 'horizontale x',
+    y: 'verticale y',
+    vx: 'vers la droite',
+    vy: 'vers le haut',
+    gestes: 'Avant le lancement, tu peux aussi glisser chaque corps et tirer sa flèche de vitesse.',
+  },
+
+  pointDeVue: {
+    titre: 'Point de vue',
+    fixe: 'Fixe',
+    centreDeMasse: 'Centre de masse',
+    centreA: 'Centré sur A',
+    centreB: 'Centré sur B',
+    annulerDerive: 'Annuler la dérive',
+    annulerDeriveDetail:
+      'Au lancement, la vitesse d’ensemble du duo est ramenée à zéro : il ne dérive plus en vue fixe.',
+  },
+
+  duo: {
+    titre: 'Le duo',
+    lies: 'Corps liés',
+    nonLies: 'Corps non liés',
+    liesDetail: 'l’énergie totale est négative',
+    nonLiesDetail: 'ils se séparent',
+    contact: 'Attention : les deux corps vont se percuter.',
+    rapport: 'Rapport de masses',
+    excentricite: 'Excentricité relative',
+    periode: 'Période',
+    demiGrandAxe: 'Demi-grand axe relatif',
+  },
+
+  afficher2: {
+    orbitesPrevues: 'Orbites prévues',
+    trainees: 'Traînées',
+    centreDeMasse: 'Centre de masse',
+    ligneAB: 'Ligne A – B',
+    flechesVitesse: 'Flèches de vitesse',
+    orbitesMasquees:
+      'En vue fixe, le duo se déplace : son orbite n’est pas une courbe fixe. Choisis le point de vue « Centre de masse » pour la voir.',
+  },
+
+  mesures2: {
+    distance: 'Distance A – B',
+    vitesse: 'Vitesse relative',
   },
 
   presets1: {

@@ -115,11 +115,6 @@
   display: flex;
 }
 
-.a-venir {
-  margin: auto;
-  color: var(--texte-secondaire);
-}
-
 /* ——— Disposition (§ 7.1) ——— */
 
 .disposition {
@@ -797,4 +792,159 @@
 /* Le trait du repère de 2ᵉ ligne passe derrière la pastille de 1ʳᵉ ligne. */
 .repere:not(.repere--bas) {
   z-index: 1;
+}
+
+/* ——— Mode 2 : onglets, champs, point de vue, duo ——— */
+
+.onglets {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 14px 0 18px;
+}
+
+.onglet {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 56px;
+  border: 1.5px solid var(--bordure-forte);
+  border-radius: 12px;
+  background: var(--fond-carte);
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.onglet[aria-selected='true'] {
+  background: var(--fond-bulle);
+}
+
+.onglet--a[aria-selected='true'] {
+  border-color: var(--couleur-corps-a);
+}
+
+.onglet--b[aria-selected='true'] {
+  border-color: var(--couleur-corps-b);
+}
+
+.pastille-corps {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+}
+
+.pastille-corps--a {
+  background: var(--couleur-corps-a);
+}
+
+.pastille-corps--b {
+  background: var(--couleur-corps-b);
+}
+
+.graduations {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 2px;
+  font-family: var(--police-nombre);
+  font-size: 0.85rem;
+  color: var(--texte-secondaire);
+}
+
+.groupe-champs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 12px;
+  margin: 18px 0 0;
+  padding: 0;
+  border: 0;
+}
+
+.groupe-champs legend {
+  padding: 0;
+  margin-bottom: 8px;
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+.unite-legende {
+  font-weight: 400;
+  color: var(--texte-secondaire);
+  font-size: 0.9rem;
+}
+
+.champ {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.champ__libelle {
+  color: var(--texte-secondaire);
+  font-size: 0.9rem;
+}
+
+.champ__saisie {
+  width: 100%;
+  min-width: 0;
+  min-height: 52px;
+  padding: 0 14px;
+  border: 1px solid var(--bordure-forte);
+  border-radius: 10px;
+  background: var(--fond-app);
+  color: var(--texte);
+  font-family: var(--police-nombre);
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.grille-boutons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 14px 0 6px;
+}
+
+.bouton-carre {
+  min-height: 52px;
+  border: 1.5px solid var(--bordure-forte);
+  border-radius: 12px;
+  background: var(--fond-carte);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.bouton-carre[aria-pressed='true'] {
+  border-color: var(--accent);
+  background: var(--fond-bulle);
+}
+
+.bascule[aria-disabled='true'] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.duo-etat {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin: 14px 0 4px;
+}
+
+.badge {
+  padding: 4px 14px;
+  border-radius: var(--rayon-pilule);
+  color: var(--texte-sur-accent);
+  font-weight: 700;
+}
+
+.badge--lies {
+  background: var(--couleur-ellipse);
+}
+
+.badge--non-lies {
+  background: var(--couleur-hyperbole);
 }

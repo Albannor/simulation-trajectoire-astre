@@ -3,7 +3,7 @@ import { formatMultiplicateur } from '../format';
 import { fr } from '../i18n/fr';
 import { type Vue } from '../render/vue';
 import { actionPrincipale } from '../sim/etats';
-import { type SimulationMode1 } from '../sim/simulationMode1';
+import { type SimulationBase } from '../sim/simulationBase';
 import {
   IconeLancer,
   IconeMoins,
@@ -16,7 +16,7 @@ import {
 import { useVersion } from './useVersion';
 
 interface Props {
-  sim: SimulationMode1;
+  sim: SimulationBase<unknown, string>;
   vue: Vue;
 }
 

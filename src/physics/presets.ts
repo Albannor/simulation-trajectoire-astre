@@ -7,6 +7,9 @@
 import { degToRad } from './constants';
 import { etatDepuisElements, parametreDepuisPeriapse, type ElementsDepart } from './kepler';
 import { type ReglagesMode1, reglagesDepuisEtat } from './mode1';
+import { type ReglagesMode2, grandeursMode2, reglagesDepuisRelatif } from './mode2';
+import { cross, norm } from './vec2';
+import { G } from './constants';
 
 export type NomPresetMode1 =
   'terre' | 'mars' | 'halley' | 'cometeHyperbolique' | 'orbiteCirculaire' | 'parabole';
@@ -75,6 +78,60 @@ export function presetMode1(nom: NomPresetMode1, courant: ReglagesMode1): Reglag
         sens: courant.sens,
       });
       return reglagesDepuisEtat(etat);
+    }
+  }
+}
+
+// ——— Mode 2 (§ 6.5) ———
+
+export type NomPresetMode2 =
+  'massesEgales' | 'grosEtPetit' | 'planeteSoleil' | 'visiteur' | 'orbiteCirculaire';
+
+/**
+ * Orbite relative définie par éléments, barycentre à l'origine et vitesse totale nulle. Orientation
+ * d'affichage : au départ, B est au-dessus de A (r⃗_rel vers le haut, comme sur la maquette 3).
+ */
+function duo(mA: number, mB: number, p: number, e: number, nu: number): ReglagesMode2 {
+  const rel = etatDepuisElements({ p, e, nu, omega: Math.PI / 2 - nu, sens: 1 }, G * (mA + mB));
+  return reglagesDepuisRelatif(mA, mB, rel);
+}
+
+/** « Un visiteur qui passe » : départ à 6 UA sur la branche d'approche (ν < 0, décision D-05). */
+const VISITEUR_E = 1.5;
+const VISITEUR_RP = 1;
+const VISITEUR_DEPART = 6;
+
+export function presetMode2(nom: NomPresetMode2, courant: ReglagesMode2): ReglagesMode2 {
+  switch (nom) {
+    case 'massesEgales':
+      // Cercle de demi-grand axe 2 UA.
+      return duo(1, 1, 2, 0, 0);
+    case 'grosEtPetit':
+      // Ellipse a = 2 UA, e = 0,5, départ à l'apoastre (ν = π).
+      return duo(1, 0.1, 2 * (1 - 0.5 ** 2), 0.5, Math.PI);
+    case 'planeteSoleil':
+      // Cercle de 1 UA, rapport 1 : 100.
+      return duo(1, 0.01, 1, 0, 0);
+    case 'visiteur': {
+      const p = parametreDepuisPeriapse(VISITEUR_RP, VISITEUR_E);
+      const nu = -Math.acos((p / VISITEUR_DEPART - 1) / VISITEUR_E);
+      return duo(1, 0.1, p, VISITEUR_E, nu);
+    }
+    case 'orbiteCirculaire': {
+      // Masses courantes, cercle à la distance courante, même direction et même sens de rotation.
+      const g = grandeursMode2(courant.a, courant.b);
+      const d = norm(g.relatif.r);
+      const rel = etatDepuisElements(
+        {
+          p: d,
+          e: 0,
+          nu: 0,
+          omega: Math.atan2(g.relatif.r.y, g.relatif.r.x),
+          sens: cross(g.relatif.r, g.relatif.v) < 0 ? -1 : 1,
+        },
+        g.mu,
+      );
+      return reglagesDepuisRelatif(courant.a.masse, courant.b.masse, rel);
     }
   }
 }

@@ -133,3 +133,32 @@ export const SECTEURS_CONSERVES = 6;
 
 /** Rayon de la zone de prise de l'astre et de la pointe de flèche (px, cible ≥ 44 px). */
 export const RAYON_PRISE_PX = 24;
+
+// ——— Mode 2 (J4) ———
+
+/** Bornes de la masse de chaque corps (× Soleil, F-M2-1), curseur logarithmique. */
+export const MASSE_MIN = 0.01;
+export const MASSE_MAX = 10;
+
+/** Bornes des saisies de position (UA) et de vitesse (UA/an) du mode 2 (décision D-25). */
+export const POSITION_MAX_MODE2 = 20;
+export const VITESSE_MAX_MODE2 = 50;
+
+/** Rayon de dessin d'un corps du mode 2 (F-SIM-5) : clamp(13·m^(1/3), 5, 26) px. */
+export const RAYON_CORPS_COEF_PX = 13;
+export const RAYON_CORPS_MIN_PX = 5;
+export const RAYON_CORPS_MAX_PX = 26;
+
+/** En deçà, la vitesse du centre de masse est considérée nulle (orbites prévues en vue fixe, § 5.6). */
+export const V_CM_NULLE = 1e-9;
+
+/**
+ * Réglages du mode 2 au premier démarrage (décision D-25) : configuration de la maquette 3 et de
+ * T-11 (masses 2 et 1, r⃗_rel = (0 ; 2,48), v⃗_rel = (−6,92 ; 3,46)), barycentre à l'origine.
+ */
+export const REGLAGES_DEFAUT_MODE2 = {
+  masseA: 2,
+  masseB: 1,
+  rRel: { x: 0, y: 2.48 },
+  vRel: { x: -6.92, y: 3.46 },
+} as const;

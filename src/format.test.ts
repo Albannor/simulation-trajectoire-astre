@@ -3,6 +3,7 @@ import {
   format,
   formatAngle,
   formatExcentricite,
+  formatFacteur,
   formatMultiplicateur,
   parseNombre,
 } from './format';
@@ -39,6 +40,16 @@ describe('T-15 format', () => {
     expect(formatExcentricite(0.967)).toBe('0,967');
     expect(formatExcentricite(1.004)).toBe('1,004');
     expect(formatExcentricite(0.95)).toBe('0,95');
+  });
+
+  it('facteur d’un rapport de masses', () => {
+    expect([2, 2.5, 1.3333, 100, 10.001].map(formatFacteur)).toEqual([
+      '2',
+      '2,5',
+      '1,33',
+      '100',
+      '10',
+    ]);
   });
 
   it('multiplicateurs de vitesse du temps', () => {

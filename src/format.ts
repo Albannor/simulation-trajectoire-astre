@@ -55,6 +55,15 @@ export function formatMultiplicateur(m: number): string {
   return `×${format(m, Number.isInteger(m) ? 0 : 1)}`;
 }
 
+/**
+ * Facteur d'un rapport (« A = 2 × B ») : entier s'il en est proche à l'affichage, sinon jusqu'à
+ * 2 décimales sans zéro inutile (« 2,5 », « 1,33 »).
+ */
+export function formatFacteur(f: number): string {
+  if (Math.abs(f - Math.round(f)) < 0.005) return format(Math.round(f), 0);
+  return format(f, 2).replace(/0$/, '');
+}
+
 const NOMBRE = /^[+-]?(\d+(\.\d*)?|\.\d+)$/;
 
 /**

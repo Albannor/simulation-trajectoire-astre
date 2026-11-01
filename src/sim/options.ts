@@ -1,3 +1,4 @@
+import type { PointDeVue } from '../render/referentiel';
 import { Observable } from './observable';
 
 /** Affichages du mode 1 (F-M1-7) et aimant (F-M1-3). Valeurs par défaut de la spécification. */
@@ -20,6 +21,26 @@ export const OPTIONS_MODE1_DEFAUT: OptionsMode1 = {
   asymptotes: true,
   loiDesAires: false,
   aimant: true,
+};
+
+/** Affichages du mode 2 (F-M2-3) et point de vue (F-M2-2). Valeurs par défaut de la spécification. */
+export interface OptionsMode2 {
+  orbitesPrevues: boolean;
+  trainees: boolean;
+  centreDeMasse: boolean;
+  ligneAB: boolean;
+  /** Pendant la simulation ; en Édition, les flèches sont toujours visibles (D-24). */
+  flechesVitesse: boolean;
+  pointDeVue: PointDeVue;
+}
+
+export const OPTIONS_MODE2_DEFAUT: OptionsMode2 = {
+  orbitesPrevues: true,
+  trainees: true,
+  centreDeMasse: true,
+  ligneAB: true,
+  flechesVitesse: false,
+  pointDeVue: 'centreDeMasse',
 };
 
 export class Options<T extends object> extends Observable {
