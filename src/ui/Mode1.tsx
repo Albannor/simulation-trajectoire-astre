@@ -7,6 +7,7 @@ import { type Vue } from '../render/vue';
 import { type Options, type OptionsMode1 } from '../sim/options';
 import { type SimulationMode1 } from '../sim/simulationMode1';
 import { BarreAfficher } from './BarreAfficher';
+import { BullesScene1 } from './BullesScene1';
 import { Commandes } from './Commandes';
 import { interactionMode1 } from './interactionMode1';
 import { PanneauMode1 } from './PanneauMode1';
@@ -45,7 +46,9 @@ export function Mode1({ sim, vue, options }: Props) {
       <section className="colonne-simulation" aria-label={fr.entete.mode1}>
         <BarreAfficher sim={sim} options={options} />
         <Tuiles sim={sim} lire={lire} />
-        <VueSimulation sim={sim} vue={vue} interaction={interaction} />
+        <VueSimulation sim={sim} vue={vue} interaction={interaction}>
+          <BullesScene1 sim={sim} options={options} />
+        </VueSimulation>
         <Commandes sim={sim} vue={vue} />
       </section>
       <aside className="panneau" aria-label={fr.lancement.titre}>

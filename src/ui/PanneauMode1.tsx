@@ -13,10 +13,11 @@ import { format, formatAngle, formatExcentricite } from '../format';
 import { fr } from '../i18n/fr';
 import { degToRad, radToDeg } from '../physics/constants';
 import { positionJauge, vCirc, vLib } from '../physics/kepler';
-import { type ReglagesMode1 } from '../physics/mode1';
+import { type ReglagesMode1, verdictLiberation } from '../physics/mode1';
 import { type NomPresetMode1, presetMode1 } from '../physics/presets';
 import { type Options, type OptionsMode1 } from '../sim/options';
 import { type SimulationMode1 } from '../sim/simulationMode1';
+import { Bulle } from './Bulle';
 import { Curseur } from './Curseur';
 import { Jauge } from './Jauge';
 import { useVersion } from './useVersion';
@@ -145,6 +146,9 @@ export function PanneauMode1({ sim, options }: Props) {
               <span className="interrupteur__piste" aria-hidden="true" />
             </button>
           </div>
+          <Bulle>
+            {fr.bulles.liberation(format(vLib(reg.r0)), format(reg.v0), verdictLiberation(reg, cl))}
+          </Bulle>
         </Curseur>
 
         <Curseur
@@ -215,6 +219,7 @@ export function PanneauMode1({ sim, options }: Props) {
               position={positionJauge(cl, el.e)}
               description={fr.forme.jauge(fr.formes[cl.forme], formatExcentricite(el.e))}
             />
+            <Bulle>{fr.bulles.forme}</Bulle>
           </>
         )}
         {cl.collision && (
@@ -292,6 +297,10 @@ export function PanneauMode1({ sim, options }: Props) {
               </>
             )}
           </div>
+          {options.valeurs.perihelieAphelie && cl.forme !== 'cercle' && (
+            <Bulle>{fr.bulles.perihelieAphelie}</Bulle>
+          )}
+          {options.valeurs.loiDesAires && <Bulle>{fr.bulles.loiDesAires}</Bulle>}
         </section>
       )}
     </>

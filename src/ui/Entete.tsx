@@ -1,16 +1,17 @@
 import { fr } from '../i18n/fr';
 import { Logo } from './Logo';
 
-export type Mode = 'mode1' | 'mode2';
+import { type Mode } from '../mode';
 
 interface EnteteProps {
   mode: Mode;
   onMode: (mode: Mode) => void;
   explications: boolean;
   onExplications: (actif: boolean) => void;
+  onAide: () => void;
 }
 
-export function Entete({ mode, onMode, explications, onExplications }: EnteteProps) {
+export function Entete({ mode, onMode, explications, onExplications, onAide }: EnteteProps) {
   return (
     <header className="entete">
       <div className="entete__marque">
@@ -47,7 +48,13 @@ export function Entete({ mode, onMode, explications, onExplications }: EntetePro
           {fr.entete.explications}
           <span className="interrupteur__piste" aria-hidden="true" />
         </button>
-        <button type="button" className="bouton-rond" aria-label={fr.entete.aide}>
+        <button
+          type="button"
+          className="bouton-rond"
+          aria-label={fr.entete.aide}
+          aria-haspopup="dialog"
+          onClick={onAide}
+        >
           ?
         </button>
       </div>

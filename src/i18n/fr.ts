@@ -54,7 +54,7 @@ export const fr = {
     aphelie: 'aphélie',
     /** Description textuelle du dessin (role="img"). */
     description: (forme: string, distance: string, temps: string) =>
-      `Simulation : trajectoire ${forme}. L’astre est à ${distance} UA du Soleil, après ${temps} an.`,
+      `Simulation\u00a0: trajectoire ${forme}. L’astre est à ${distance} UA du Soleil, après ${temps} an.`,
   },
 
   mesures: {
@@ -67,7 +67,7 @@ export const fr = {
     precisionCorrecte: 'précision correcte',
     precisionDegradee: 'précision réduite',
     precisionDetail: (ecart: string) =>
-      `Écart d’énergie dû au calcul : ${ecart} (correct en dessous de 0,01 %).`,
+      `Écart d’énergie dû au calcul\u00a0: ${ecart} (correct en dessous de 0,01 %).`,
   },
 
   fins: {
@@ -82,7 +82,7 @@ export const fr = {
     masse: (m: string) => `masse ${m}`,
     depart: (corps: string) => `départ ${corps}`,
     description: (lies: string, distance: string, temps: string) =>
-      `Simulation de deux corps : ${lies}. Distance entre A et B : ${distance} UA, après ${temps} an.`,
+      `Simulation de deux corps\u00a0: ${lies}. Distance entre A et B\u00a0: ${distance} UA, après ${temps} an.`,
   },
 
   presets2: {
@@ -182,7 +182,7 @@ export const fr = {
     excentricite: 'excentricité',
     presque: 'presque',
     collision: 'Attention : l’astre ira percuter le Soleil.',
-    jauge: (forme: string, e: string) => `Jauge de forme : ${forme}, excentricité ${e}`,
+    jauge: (forme: string, e: string) => `Jauge de forme\u00a0: ${forme}, excentricité ${e}`,
     droite: 'Trajectoire droite',
   },
 
@@ -217,33 +217,76 @@ export const fr = {
   },
 
   /** Bulles d'explication (§ 6.7). */
+  aide: {
+    titre: 'Aide',
+    fermer: 'Fermer',
+    sections: [
+      {
+        titre: 'Les deux modes',
+        texte: [
+          'Un astre autour du Soleil\u00a0: règle la distance, la vitesse et la direction du lancer, puis observe la forme de la trajectoire\u00a0: cercle, ellipse, parabole ou hyperbole.',
+          'Deux corps\u00a0: deux corps de masses réglables s’attirent l’un l’autre. Observe leur centre de masse et change de point de vue.',
+        ],
+      },
+      {
+        titre: 'Les gestes',
+        texte: [
+          'Avant le lancement, glisse l’astre pour changer sa position, et tire la pointe de sa flèche pour changer sa vitesse et sa direction.',
+          'Glisse le fond pour déplacer la vue, utilise la molette ou les boutons − et + pour zoomer. «\u00a0Recentrer\u00a0» recadre automatiquement.',
+        ],
+      },
+      {
+        titre: 'Le clavier',
+        texte: [
+          'Espace\u00a0: lancer ou mettre en pause. R\u00a0: recommencer. + et −\u00a0: zoomer. 0\u00a0: recentrer.',
+        ],
+      },
+      {
+        titre: 'Les unités',
+        texte: [
+          'Les distances sont en UA (1 UA = distance Terre – Soleil), le temps en années, les vitesses en UA par an, les masses en masses du Soleil.',
+          'Repère\u00a0: la Terre tourne autour du Soleil à 6,28 UA/an et fait un tour en 1 an.',
+        ],
+      },
+      {
+        titre: 'À savoir',
+        texte: [
+          'Le Soleil, les astres et les corps ne sont pas dessinés à l’échelle\u00a0: en vrai, ils seraient bien trop petits pour être vus.',
+          'Active «\u00a0Explications\u00a0» pour afficher de petites bulles qui expliquent ce que tu vois.',
+        ],
+      },
+    ],
+  },
+
   bulles: {
+    icone: 'Explication',
     forme:
-      'L’excentricité mesure l’écart à un cercle : 0 pour un cercle, entre 0 et 1 pour une ellipse, 1 pour une parabole, plus de 1 pour une hyperbole.',
+      'L’excentricité mesure l’écart à un cercle\u00a0: 0 pour un cercle, entre 0 et 1 pour une ellipse, 1 pour une parabole, plus de 1 pour une hyperbole.',
     liberation: (vLib: string, v0: string, verdict: 'assez' | 'pasAssez' | 'toutJuste') =>
-      `À cette distance, il faut aller à ${vLib} UA/an pour échapper au Soleil. Ici, ${v0} : ${
+      `À cette distance, il faut aller à ${vLib} UA/an pour échapper au Soleil. Ici, ${v0}\u00a0: ${
         {
           assez: 'c’est largement assez.',
           pasAssez: 'ce n’est pas assez.',
-          // Décision D-06 : troisième cas lorsque la trajectoire est une parabole.
+          // Décision D-06\u00a0: troisième cas lorsque la trajectoire est une parabole.
           toutJuste: 'c’est tout juste la vitesse de libération.',
         }[verdict]
       }`,
     ellipse:
-      'L’astre est trop lent pour s’échapper : il reste prisonnier du Soleil et revient toujours.',
+      'L’astre est trop lent pour s’échapper\u00a0: il reste prisonnier du Soleil et revient toujours.',
     hyperbole:
-      'Cet astre va plus vite que la vitesse de libération : il est attiré par le Soleil, mais ne reviendra jamais.',
+      'Cet astre va plus vite que la vitesse de libération\u00a0: il est attiré par le Soleil, mais ne reviendra jamais.',
     asymptotes: (deviation: string) =>
-      `Les pointillés gris sont les asymptotes : très loin du Soleil, l’astre les suit presque en ligne droite. Son trajet est dévié de ${deviation}°.`,
+      `Les pointillés gris sont les asymptotes\u00a0: très loin du Soleil, l’astre les suit presque en ligne droite. Son trajet est dévié de ${deviation}°.`,
     loiDesAires:
-      'En des durées égales, l’astre balaie des surfaces égales : il va donc plus vite près du Soleil.',
+      'En des durées égales, l’astre balaie des surfaces égales\u00a0: il va donc plus vite près du Soleil.',
     perihelieAphelie:
       'Le périhélie est le point le plus proche du Soleil, l’aphélie le plus éloigné.',
     centreDeMasse:
       'C’est le point d’équilibre du duo. Les deux corps tournent autour de lui, le plus léger fait la plus grande orbite.',
     corpsLies:
-      'Si l’énergie totale est négative, les deux corps restent ensemble ; sinon ils se séparent.',
-    pointDeVue: 'Change de point de vue : dans celui du centre de masse, le duo tourne sur place.',
+      'Si l’énergie totale est négative, les deux corps restent ensemble\u00a0; sinon ils se séparent.',
+    pointDeVue:
+      'Change de point de vue\u00a0: dans celui du centre de masse, le duo tourne sur place.',
   },
 } as const;
 

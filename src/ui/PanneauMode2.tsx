@@ -7,6 +7,7 @@ import { type NomPresetMode2, presetMode2 } from '../physics/presets';
 import { type NomCorps, type PointDeVue } from '../render/referentiel';
 import { type Options, type OptionsMode2 } from '../sim/options';
 import { type SimulationMode2 } from '../sim/simulationMode2';
+import { Bulle } from './Bulle';
 import { ChampNombre } from './ChampNombre';
 import { Curseur } from './Curseur';
 import { useVersion } from './useVersion';
@@ -201,6 +202,8 @@ export function PanneauMode2({ sim, options }: Props) {
             <span className="interrupteur__piste" aria-hidden="true" />
           </button>
         </div>
+        <Bulle>{fr.bulles.pointDeVue}</Bulle>
+        <Bulle>{fr.bulles.centreDeMasse}</Bulle>
       </section>
 
       <section className="carte carte-duo" aria-labelledby="titre-duo">
@@ -211,6 +214,7 @@ export function PanneauMode2({ sim, options }: Props) {
           </span>
           <span>{sim.lies ? fr.duo.liesDetail : fr.duo.nonLiesDetail}</span>
         </p>
+        <Bulle>{fr.bulles.corpsLies}</Bulle>
         {cl.collision && (
           <p className="avertissement" role="status">
             <span aria-hidden="true">⚠ </span>

@@ -948,3 +948,84 @@
 .badge--non-lies {
   background: var(--couleur-hyperbole);
 }
+
+/* ——— Bulles d'explication (§ 6.7) ——— */
+
+.bulle {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-top: 12px;
+  padding: 14px 16px;
+  background: var(--fond-bulle);
+  border: 1px solid var(--bordure-bulle);
+  border-radius: 14px;
+}
+
+.bulle__icone {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--texte-sur-accent);
+  font-weight: 700;
+}
+
+.bulle__texte {
+  margin: 0;
+  line-height: 1.45;
+}
+
+.bulle--scene {
+  /* Texte seul : les gestes passent au travers vers la scène. */
+  pointer-events: none;
+  position: absolute;
+  right: 20px;
+  max-width: min(420px, 60%);
+  margin: 0;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+}
+
+.bulle--haut {
+  top: 20px;
+}
+
+.bulle--bas {
+  bottom: 20px;
+}
+
+/* ——— Aide (F-APP-2) ——— */
+
+.boite-aide {
+  width: min(640px, calc(100vw - 32px));
+  max-height: calc(100vh - 64px);
+  padding: 24px 28px;
+  background: var(--fond-panneau);
+  color: var(--texte);
+  border: 1px solid var(--bordure-forte);
+  border-radius: 16px;
+}
+
+.boite-aide::backdrop {
+  background: rgba(3, 6, 15, 0.7);
+}
+
+.boite-aide__entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.boite-aide__section h3 {
+  margin-top: 20px;
+  font-size: 1.1rem;
+}
+
+.boite-aide__section p {
+  margin: 8px 0 0;
+  line-height: 1.5;
+}

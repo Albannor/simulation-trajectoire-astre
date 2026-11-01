@@ -8,7 +8,9 @@ import {
   etatInitialMode1,
   reglagesDepuisFleche,
   reglagesDepuisPosition,
+  verdictLiberation,
 } from './mode1';
+import { classifier } from './kepler';
 
 const REG: ReglagesMode1 = { r0: 1, v0: 5, theta: degToRad(70), sens: 1, phi0: 0 };
 
@@ -58,5 +60,18 @@ describe('aimant (F-M1-3, D-22)', () => {
   it('cale θ sur 90° à moins de 3°', () => {
     expect(appliquerAimant({ ...REG, theta: degToRad(92.5) }).theta).toBe(Math.PI / 2);
     expect(appliquerAimant({ ...REG, theta: degToRad(86) }).theta).toBe(degToRad(86));
+  });
+});
+
+describe('verdict de la bulle « vitesse de libération » (§ 6.7, D-06)', () => {
+  const verdict = (v0: number, thetaDeg = 90) => {
+    const reg = { ...REG, r0: 3.99, v0, theta: degToRad(thetaDeg) };
+    return verdictLiberation(reg, classifier(etatInitialMode1(reg)));
+  };
+  it('assez, pas assez, tout juste', () => {
+    expect(verdict(6.79, 159)).toBe('assez'); // maquette 2 : 6,79 contre 4,45
+    expect(verdict(3)).toBe('pasAssez');
+    expect(verdict(vLib(3.99))).toBe('toutJuste');
+    expect(verdict(vLib(3.99) * 1.001)).toBe('toutJuste');
   });
 });

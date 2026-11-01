@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { type ReactNode, useEffect, useRef } from 'react';
 import { FACTEUR_ZOOM_MOLETTE, TRACE_SEUIL_PX } from '../config';
 import { fr } from '../i18n/fr';
 import { type Vue } from '../render/vue';
@@ -13,10 +13,12 @@ interface Props {
   sim: SimulationBase<unknown, CleFin>;
   vue: Vue;
   interaction: Interaction;
+  /** Éléments superposés à la scène (bulles d'explication). */
+  children?: ReactNode;
 }
 
 /** Zone de dessin : boucle d'animation, gestes (glisser un élément ou la vue), molette. */
-export function VueSimulation({ sim, vue, interaction }: Props) {
+export function VueSimulation({ sim, vue, interaction, children }: Props) {
   const conteneurRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const geste = useRef<
@@ -121,6 +123,7 @@ export function VueSimulation({ sim, vue, interaction }: Props) {
       <p className="vue-simulation__fin" aria-live="polite">
         {sim.fin ? fr.fins[sim.fin] : ''}
       </p>
+      {children}
     </div>
   );
 }

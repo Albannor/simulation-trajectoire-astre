@@ -14,7 +14,15 @@ import {
 import { degToRad } from './constants';
 import { MU_SOLEIL } from './constants';
 import { type ResultatImage, avancerImage } from './integrator';
-import { type BodyState, type Sens, distanceMinEstimee, elements, vCirc, vLib } from './kepler';
+import {
+  type BodyState,
+  type Classification,
+  type Sens,
+  distanceMinEstimee,
+  elements,
+  vCirc,
+  vLib,
+} from './kepler';
 import { type SystemeNCorps, creerSysteme, etatCorps } from './nbody';
 import { add, cross, dot, norm, polar, scale } from './vec2';
 
@@ -180,4 +188,17 @@ export function ecartEnergie(
 /** Mesures en direct (F-SIM-6) : distance au Soleil (UA) et vitesse (UA/an). */
 export function mesuresMode1(etat: BodyState): { distance: number; vitesse: number } {
   return { distance: norm(etat.r), vitesse: norm(etat.v) };
+}
+
+/**
+ * Verdict de la bulle « vitesse de libération » (§ 6.7, D-06) : « tout juste » si la trajectoire
+ * est classée parabole (même critère que D-17), sinon selon que v₀ dépasse v_lib(r₀).
+ */
+export function verdictLiberation(
+  reg: ReglagesMode1,
+  cl: Classification,
+  mu: number = MU_SOLEIL,
+): 'assez' | 'pasAssez' | 'toutJuste' {
+  if (cl.type === 'conique' && cl.forme === 'parabole') return 'toutJuste';
+  return reg.v0 > vLib(reg.r0, mu) ? 'assez' : 'pasAssez';
 }
