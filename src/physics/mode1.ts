@@ -2,10 +2,19 @@
  * Mode 1 — un astre de masse négligeable autour du Soleil fixe (§ 5.1, § 5.7).
  */
 
-import { R_COLLISION, R_SORTIE } from '../config';
+import {
+  AIMANT_TOL,
+  AIMANT_TOL_ANGLE_DEG,
+  R0_MAX,
+  R0_MIN,
+  R_COLLISION,
+  R_SORTIE,
+  V0_MAX,
+} from '../config';
+import { degToRad } from './constants';
 import { MU_SOLEIL } from './constants';
 import { type ResultatImage, avancerImage } from './integrator';
-import { type BodyState, type Sens, distanceMinEstimee, elements } from './kepler';
+import { type BodyState, type Sens, distanceMinEstimee, elements, vCirc, vLib } from './kepler';
 import { type SystemeNCorps, creerSysteme, etatCorps } from './nbody';
 import { add, cross, dot, norm, polar, scale } from './vec2';
 
@@ -59,6 +68,47 @@ export function avecPerihelieADroite(reg: ReglagesMode1): ReglagesMode1 {
   const { omega } = elements(etatInitialMode1({ ...reg, phi0: 0 }));
   const phi0 = Math.atan2(Math.sin(-omega), Math.cos(-omega));
   return { ...reg, phi0 };
+}
+
+/** Glisser de l'astre (F-M1-2) : nouvelle position (UA), distance bornée à [R0_MIN, R0_MAX]. */
+export function reglagesDepuisPosition(reg: ReglagesMode1, x: number, y: number): ReglagesMode1 {
+  const r = Math.hypot(x, y);
+  return {
+    ...reg,
+    r0: Math.min(R0_MAX, Math.max(R0_MIN, r)),
+    phi0: r > 0 ? Math.atan2(y, x) : reg.phi0,
+  };
+}
+
+/**
+ * Tirer la flèche (F-M1-2) : vecteur vitesse (UA/an) → v₀ (borné à V0_MAX), θ ∈ [0, π] et sens.
+ * Une flèche exactement radiale conserve le sens courant.
+ */
+export function reglagesDepuisFleche(reg: ReglagesMode1, vx: number, vy: number): ReglagesMode1 {
+  const v = { x: vx, y: vy };
+  const rHat = polar(reg.phi0);
+  const vr = dot(v, rHat);
+  const vt = cross(rHat, v);
+  return {
+    ...reg,
+    v0: Math.min(V0_MAX, Math.hypot(vx, vy)),
+    theta: Math.atan2(Math.abs(vt), vr),
+    sens: vt > 0 ? 1 : vt < 0 ? -1 : reg.sens,
+  };
+}
+
+/**
+ * Aimant (F-M1-3, D-22) : à moins de AIMANT_TOL d'un repère (vitesse circulaire ou de libération
+ * à r₀), la vitesse s'y cale exactement ; à moins de AIMANT_TOL_ANGLE_DEG de 90°, θ se cale sur 90°.
+ */
+export function appliquerAimant(reg: ReglagesMode1, mu: number = MU_SOLEIL): ReglagesMode1 {
+  let v0 = reg.v0;
+  for (const repere of [vCirc(reg.r0, mu), vLib(reg.r0, mu)]) {
+    if (Math.abs(v0 - repere) <= AIMANT_TOL * repere) v0 = repere;
+  }
+  const droit = Math.PI / 2;
+  const theta = Math.abs(reg.theta - droit) <= degToRad(AIMANT_TOL_ANGLE_DEG) ? droit : reg.theta;
+  return { ...reg, v0, theta };
 }
 
 /** Indice des corps dans le système du mode 1. */

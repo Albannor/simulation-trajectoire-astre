@@ -16,12 +16,16 @@ import {
   type BodyState,
   type Classification,
   type OrbitElements,
+  asymptotes,
   echantillonnerConique,
+  foyerVide,
+  pointConique,
   rayonMaxRadial,
 } from '../physics/kepler';
+import { type OptionsMode1 } from '../sim/options';
 import { type SimulationMode1, formeDe } from '../sim/simulationMode1';
 import { type Trace } from '../sim/trace';
-import { type Boite, type Camera, boiteDe, rayonVisible, versEcran } from './camera';
+import { type Boite, type Camera, type Point, boiteDe, rayonVisible, versEcran } from './camera';
 import { theme } from './theme';
 
 const ORIGINE = { x: 0, y: 0 };
@@ -122,24 +126,29 @@ function etiquette(
   ctx.fillText(texte, x, y);
 }
 
-/** Flèche de vitesse : 12 px par UA/an, bornée à [10 ; 200] px (F-M1-2). */
-function fleche(
-  ctx: CanvasRenderingContext2D,
-  depuis: { x: number; y: number },
-  v: { x: number; y: number },
-  couleur: string,
-): void {
+/**
+ * Pointe de la flèche de vitesse à l'écran : 12 px par UA/an, longueur bornée à [10 ; 200] px
+ * (F-M1-2). `null` si la vitesse est nulle.
+ */
+export function pointeFleche(depuis: Point, v: Point): Point | null {
   const vitesse = Math.hypot(v.x, v.y);
-  if (vitesse === 0) return;
+  if (vitesse === 0) return null;
   const longueur = Math.min(
     FLECHE_MAX_PX,
     Math.max(FLECHE_MIN_PX, FLECHE_PX_PAR_VITESSE * vitesse),
   );
   // Écran : y vers le bas.
-  const ux = v.x / vitesse;
-  const uy = -v.y / vitesse;
-  const bx = depuis.x + ux * longueur;
-  const by = depuis.y + uy * longueur;
+  return { x: depuis.x + (v.x / vitesse) * longueur, y: depuis.y - (v.y / vitesse) * longueur };
+}
+
+function fleche(ctx: CanvasRenderingContext2D, depuis: Point, v: Point, couleur: string): void {
+  const pointe = pointeFleche(depuis, v);
+  if (!pointe) return;
+  const longueur = Math.hypot(pointe.x - depuis.x, pointe.y - depuis.y);
+  const ux = (pointe.x - depuis.x) / longueur;
+  const uy = (pointe.y - depuis.y) / longueur;
+  const bx = pointe.x;
+  const by = pointe.y;
   ctx.strokeStyle = couleur;
   ctx.fillStyle = couleur;
   ctx.lineWidth = 3;
@@ -190,10 +199,153 @@ function dessinerOrbitePrevue(
   ctx.globalAlpha = 1;
 }
 
+/** Secteurs de la loi des aires (F-M1-8), en deux teintes alternées. */
+function dessinerSecteurs(
+  ctx: CanvasRenderingContext2D,
+  cam: Camera,
+  sim: SimulationMode1,
+  couleur: string,
+): void {
+  const soleil = versEcran(cam, 0, 0);
+  ctx.fillStyle = couleur;
+  for (const secteur of sim.secteurs) {
+    if (secteur.points.length < 4) continue;
+    ctx.globalAlpha = secteur.rang % 2 === 0 ? 0.32 : 0.14;
+    ctx.beginPath();
+    ctx.moveTo(soleil.x, soleil.y);
+    for (let k = 0; k + 1 < secteur.points.length; k += 2) {
+      const p = versEcran(cam, secteur.points[k] ?? 0, secteur.points[k + 1] ?? 0);
+      ctx.lineTo(p.x, p.y);
+    }
+    ctx.closePath();
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+}
+
+/** Repère ponctuel étiqueté (périhélie, aphélie) : point blanc, nom et distance. */
+function repere(
+  ctx: CanvasRenderingContext2D,
+  p: Point,
+  nom: string,
+  valeur: string,
+  versLaDroite: boolean,
+): void {
+  disque(ctx, p.x, p.y, 5, theme.texte);
+  const x = p.x + (versLaDroite ? 16 : -16);
+  const alignement: CanvasTextAlign = versLaDroite ? 'left' : 'right';
+  etiquette(ctx, nom, x, p.y - 22, theme.texte, undefined, alignement);
+  etiquette(ctx, valeur, x, p.y + 26, theme.texte, theme.polices.valeur, alignement);
+}
+
+/** Repères géométriques (F-M1-7) : grand axe, périhélie/aphélie, foyers, asymptotes, cercle r₀. */
+function dessinerReperes(
+  ctx: CanvasRenderingContext2D,
+  cam: Camera,
+  sim: SimulationMode1,
+  options: OptionsMode1,
+): void {
+  const { elements: el, classification: cl, reglages } = sim;
+  const soleil = versEcran(cam, 0, 0);
+  ctx.strokeStyle = theme.repere;
+  ctx.lineWidth = 1.5;
+
+  if (options.cercleReference) {
+    ctx.globalAlpha = 0.6;
+    ctx.setLineDash([3, 6]);
+    ctx.beginPath();
+    ctx.arc(soleil.x, soleil.y, reglages.r0 * cam.echelle, 0, 2 * Math.PI);
+    ctx.stroke();
+  }
+  if (cl.type === 'droite') {
+    ctx.setLineDash([]);
+    ctx.globalAlpha = 1;
+    return;
+  }
+
+  if (options.asymptotes && cl.forme === 'hyperbole') {
+    const as = asymptotes(el);
+    if (as) {
+      // Demi-droites partant du centre, du côté des deux bras de l'hyperbole (maquette 2).
+      const longueur = 2 * rayonVisible(cam, as.centre);
+      ctx.globalAlpha = 0.6;
+      ctx.setLineDash([6, 6]);
+      for (const angle of as.directions) {
+        const a = versEcran(cam, as.centre.x, as.centre.y);
+        const b = versEcran(
+          cam,
+          as.centre.x + longueur * Math.cos(angle),
+          as.centre.y + longueur * Math.sin(angle),
+        );
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+      }
+    }
+  }
+
+  const fermee = cl.forme === 'ellipse' || cl.forme === 'cercle';
+  if (options.foyers && cl.forme !== 'parabole') {
+    const f = foyerVide(el);
+    if (f && cl.forme !== 'cercle') {
+      const pf = versEcran(cam, f.x, f.y);
+      ctx.globalAlpha = 1;
+      ctx.setLineDash([]);
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(pf.x - 7, pf.y - 7);
+      ctx.lineTo(pf.x + 7, pf.y + 7);
+      ctx.moveTo(pf.x + 7, pf.y - 7);
+      ctx.lineTo(pf.x - 7, pf.y + 7);
+      ctx.stroke();
+      etiquette(ctx, fr.scene.foyer, pf.x, pf.y + 20, theme.texteSecondaire, undefined, 'center');
+    }
+    etiquette(
+      ctx,
+      fr.scene.foyer,
+      soleil.x,
+      soleil.y - RAYON_SOLEIL_PX - 14,
+      theme.texteSecondaire,
+      undefined,
+      'center',
+    );
+  }
+
+  // Le cercle n'a ni périhélie ni aphélie privilégiés : pas de repère.
+  if (options.perihelieAphelie && cl.forme !== 'cercle') {
+    const peri = versEcran(cam, ...xy(pointConique(el, 0)));
+    const surDroite = peri.x >= soleil.x;
+    if (fermee) {
+      const aph = versEcran(cam, ...xy(pointConique(el, Math.PI)));
+      ctx.globalAlpha = 0.5;
+      ctx.setLineDash([4, 6]);
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(peri.x, peri.y);
+      ctx.lineTo(aph.x, aph.y);
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+      ctx.setLineDash([]);
+      repere(ctx, aph, fr.scene.aphelie, `${format(el.ra ?? 0)} ${fr.unites.distance}`, !surDroite);
+    }
+    ctx.globalAlpha = 1;
+    ctx.setLineDash([]);
+    repere(ctx, peri, fr.scene.perihelie, `${format(el.rp)} ${fr.unites.distance}`, surDroite);
+  }
+  ctx.setLineDash([]);
+  ctx.globalAlpha = 1;
+}
+
+function xy(p: Point): [number, number] {
+  return [p.x, p.y];
+}
+
 export function dessinerScene1(
   ctx: CanvasRenderingContext2D,
   cam: Camera,
   sim: SimulationMode1,
+  options: OptionsMode1,
 ): void {
   const couleur = theme.formes[formeDe(sim.classification)];
   const enEdition = sim.etat === 'edition';
@@ -206,8 +358,10 @@ export function dessinerScene1(
   ctx.fillRect(0, 0, cam.largeur, cam.hauteur);
   dessinerEtoiles(ctx, cam);
 
-  // Orbite prévue (§ 5.4).
-  dessinerOrbitePrevue(ctx, cam, sim, couleur);
+  if (options.loiDesAires) dessinerSecteurs(ctx, cam, sim, couleur);
+
+  // Orbite prévue (§ 5.4), désactivable.
+  if (options.orbitePrevue) dessinerOrbitePrevue(ctx, cam, sim, couleur);
 
   // Anciennes traces, atténuées (F-APP-5).
   ctx.lineWidth = 2;
@@ -228,6 +382,8 @@ export function dessinerScene1(
     if (!enEdition) ctx.lineTo(pAstre.x, pAstre.y);
     ctx.stroke();
   }
+
+  dessinerReperes(ctx, cam, sim, options);
 
   // Distance Soleil–astre (F-M1-10).
   const distance = Math.hypot(astre.r.x, astre.r.y);
@@ -299,5 +455,15 @@ export function dessinerScene1(
   // Astre (10 px).
   disque(ctx, pAstre.x, pAstre.y, RAYON_ASTRE_PX + 2, theme.texte);
   disque(ctx, pAstre.x, pAstre.y, RAYON_ASTRE_PX, couleur);
-  etiquette(ctx, fr.scene.astre, pAstre.x + 16, pAstre.y - 16, couleur);
+  // Étiquette du côté du Soleil : les repères (périhélie, aphélie) sont étiquetés vers l'extérieur.
+  const versSoleil = pAstre.x >= soleil.x ? -1 : 1;
+  etiquette(
+    ctx,
+    fr.scene.astre,
+    pAstre.x + versSoleil * 16,
+    pAstre.y - 18,
+    couleur,
+    undefined,
+    versSoleil < 0 ? 'right' : 'left',
+  );
 }

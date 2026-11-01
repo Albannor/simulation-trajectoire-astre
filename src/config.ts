@@ -106,3 +106,30 @@ export const FACTEUR_ZOOM_MOLETTE = 1.0015;
  * (e ≈ 0,60), orientée périhélie à droite. Angles en degrés (saisie), convertis à l'usage.
  */
 export const REGLAGES_DEFAUT_MODE1 = { r0: 0.81, v0: 8.43, thetaDeg: 64, sens: 1 } as const;
+
+// ——— Panneau du mode 1 (J3) ———
+
+/** Bornes des réglages du mode 1 (F-M1-1). */
+export const R0_MIN = 0.3;
+export const R0_MAX = 5;
+export const V0_MIN = 0;
+export const V0_MAX = 12;
+export const THETA_MIN_DEG = 0;
+export const THETA_MAX_DEG = 180;
+
+/** Pas des curseurs (unités d'affichage). */
+export const PAS_R0 = 0.01;
+export const PAS_V0 = 0.01;
+export const PAS_THETA_DEG = 1;
+
+/** Aimant de la flèche (F-M1-3) : écart relatif à un repère de vitesse. */
+export const AIMANT_TOL = 0.03;
+/** Aimant de la flèche sur la direction perpendiculaire θ = 90° (décision D-22), en degrés. */
+export const AIMANT_TOL_ANGLE_DEG = 3;
+
+/** Loi des aires (F-M1-8) : nombre de secteurs par période et secteurs conservés. */
+export const SECTEURS_PAR_PERIODE = 12;
+export const SECTEURS_CONSERVES = 6;
+
+/** Rayon de la zone de prise de l'astre et de la pointe de flèche (px, cible ≥ 44 px). */
+export const RAYON_PRISE_PX = 24;

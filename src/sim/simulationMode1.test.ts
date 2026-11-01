@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { NB_ANCIENNES_TRACES, TEMPS_X1 } from '../config';
+import { degToRad } from '../physics/constants';
+import { aireBalayee } from '../physics/kepler';
 import { presetMode1 } from '../physics/presets';
 import { type ReglagesMode1 } from '../physics/mode1';
 import { SimulationMode1 } from './simulationMode1';
@@ -87,5 +89,45 @@ describe('SimulationMode1', () => {
     sim.avancer(0.1);
     expect(sim.precisionCorrecte).toBe(true);
     expect(sim.ralenti).toBe(false);
+  });
+});
+
+/** Aire d’un secteur : polygone Soleil (origine) + points balayés (formule du lacet). */
+function aireSecteur(points: number[]): number {
+  let a = 0;
+  for (let k = 0; k + 3 < points.length; k += 2) {
+    a += points[k]! * points[k + 3]! - points[k + 2]! * points[k + 1]!;
+  }
+  return Math.abs(a) / 2;
+}
+
+describe('loi des aires (F-M1-8)', () => {
+  it.each([1, 10, 100])('×%d : secteurs d’aires égales à |h|·Δt/2, 6 conservés', (k) => {
+    const sim = new SimulationMode1(
+      { r0: 0.81, v0: 8.43, theta: degToRad(64), sens: 1, phi0: 0 },
+      k,
+    );
+    sim.seuilTrace = 0.002;
+    sim.lancer();
+    // 1,5 période, images de 1/60 s.
+    const nImages = Math.ceil((1.5 * sim.elements.periode!) / ((TEMPS_X1 * k) / 60));
+    for (let i = 0; i < nImages; i++) sim.avancer(1 / 60);
+    const termines = sim.secteurs.slice(0, -1);
+    expect(termines).toHaveLength(6);
+    const attendu = aireBalayee(sim.elements.h, sim.dureeSecteur!);
+    const ecarts = termines.map((sec) => Math.abs(aireSecteur(sec.points) / attendu - 1));
+    // Écart mesuré (2026-11-01) : 0,40 % (×1) ; 0,63 % (×10) ; 0,21 % (×100). Il vient des cordes
+    // (points espacés de 0,002 UA) et des frontières placées au sous-pas. Tolérance 2 % : un écart
+    // invisible à l’écran, la loi elle-même étant exacte (T-07 : h conservé à 1e-12).
+    expect(Math.max(...ecarts)).toBeLessThan(0.02);
+    // Rangs consécutifs : l’alternance des couleurs est continue.
+    termines.forEach((sec, i) => i > 0 && expect(sec.rang).toBe(termines[i - 1]!.rang + 1));
+  });
+
+  it('pas de secteurs pour une trajectoire droite', () => {
+    const sim = new SimulationMode1({ ...TERRE, theta: 0, v0: 3 }, 1);
+    sim.lancer();
+    sim.avancer(0.05);
+    expect(sim.secteurs).toHaveLength(0);
   });
 });

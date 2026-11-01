@@ -12,6 +12,19 @@ export class Vue {
   /** Vrai dès que l'utilisateur a zoomé ou déplacé la vue. */
   manuel = false;
   private boite: Boite | null = null;
+  /** Cadrage automatique suspendu pendant un geste direct (sinon la scène bouge sous le doigt). */
+  private gelee = false;
+
+  /** Suspend le cadrage automatique (début d'un glisser de l'astre ou de la flèche). */
+  geler(): void {
+    this.gelee = true;
+  }
+
+  /** Fin du geste : le cadrage automatique reprend s'il est actif. */
+  degeler(): void {
+    this.gelee = false;
+    if (!this.manuel) this.cadrerAuto();
+  }
 
   /** Boîte de la scène à cadrer (recalculée à chaque changement de réglage). */
   definirBoite(boite: Boite): void {
@@ -54,7 +67,7 @@ export class Vue {
   }
 
   private cadrerAuto(): void {
-    if (!this.boite || this.camera.largeur <= 1) return;
+    if (this.gelee || !this.boite || this.camera.largeur <= 1) return;
     this.camera = cadrer(this.boite, this.camera.largeur, this.camera.hauteur, MARGE_CADRAGE_PX);
   }
 }

@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
 import { fr } from '../i18n/fr';
-import { presetMode1 } from '../physics/presets';
 import { boiteCadrageMode1 } from '../render/scene1';
 import { type Vue } from '../render/vue';
-import { DEFAUT_MODE1 } from '../sim/defauts';
+import { type Options, type OptionsMode1 } from '../sim/options';
 import { type SimulationMode1 } from '../sim/simulationMode1';
+import { BarreAfficher } from './BarreAfficher';
 import { Commandes } from './Commandes';
+import { PanneauMode1 } from './PanneauMode1';
 import { Tuiles } from './Tuiles';
 import { VueSimulation } from './VueSimulation';
 
@@ -48,9 +49,10 @@ function useClavier(sim: SimulationMode1, vue: Vue): void {
 interface Props {
   sim: SimulationMode1;
   vue: Vue;
+  options: Options<OptionsMode1>;
 }
 
-export function Mode1({ sim, vue }: Props) {
+export function Mode1({ sim, vue, options }: Props) {
   // Cadrage automatique à chaque changement (F-SIM-4).
   useEffect(() => {
     const maj = () =>
@@ -64,29 +66,13 @@ export function Mode1({ sim, vue }: Props) {
   return (
     <div className="disposition">
       <section className="colonne-simulation" aria-label={fr.entete.mode1}>
+        <BarreAfficher sim={sim} options={options} />
         <Tuiles sim={sim} />
-        <VueSimulation sim={sim} vue={vue} />
+        <VueSimulation sim={sim} vue={vue} options={options} />
         <Commandes sim={sim} vue={vue} />
       </section>
-      <aside className="panneau">
-        <h2>{fr.provisoire.titre}</h2>
-        <div className="pilules">
-          <button
-            type="button"
-            className="bouton-pilule"
-            onClick={() => sim.modifierReglages(presetMode1('terre', sim.reglages))}
-          >
-            {fr.provisoire.terre}
-          </button>
-          <button
-            type="button"
-            className="bouton-pilule"
-            onClick={() => sim.modifierReglages(DEFAUT_MODE1)}
-          >
-            {fr.provisoire.ellipse}
-          </button>
-        </div>
-        <p className="note">{fr.provisoire.note}</p>
+      <aside className="panneau" aria-label={fr.lancement.titre}>
+        <PanneauMode1 sim={sim} options={options} />
       </aside>
     </div>
   );

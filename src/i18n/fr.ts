@@ -49,6 +49,9 @@ export const fr = {
     soleil: 'Soleil',
     astre: 'astre',
     depart: 'départ',
+    foyer: 'foyer',
+    perihelie: 'périhélie',
+    aphelie: 'aphélie',
     /** Description textuelle du dessin (role="img"). */
     description: (forme: string, distance: string, temps: string) =>
       `Simulation : trajectoire ${forme}. L’astre est à ${distance} UA du Soleil, après ${temps} an.`,
@@ -72,11 +75,66 @@ export const fr = {
     sortie: 'L’astre s’éloigne pour toujours',
   },
 
-  provisoire: {
+  presets1: {
     titre: 'Choisis un astre',
     terre: 'Terre',
-    ellipse: 'Ellipse de la maquette',
-    note: 'Les réglages complets arrivent au jalon J3.',
+    mars: 'Mars',
+    halley: 'Comète de Halley',
+    cometeHyperbolique: 'Comète hyperbolique',
+    orbiteCirculaire: 'Orbite circulaire',
+    parabole: 'Parabole',
+  },
+
+  lancement: {
+    titre: 'Le lancement',
+    distance: 'Distance au Soleil',
+    rappelDistance: '1 UA = distance Terre – Soleil',
+    vitesse: 'Vitesse de départ',
+    rappelTerre: 'Repère : la Terre va à 6,28 UA/an',
+    circulaire: 'circulaire',
+    liberation: 'libération',
+    repereCirculaire: (v: string) => `Caler la vitesse sur la vitesse circulaire, ${v} UA/an`,
+    repereLiberation: (v: string) => `Caler la vitesse sur la vitesse de libération, ${v} UA/an`,
+    aimant: 'Aimant',
+    aimantDetail: 'Près d’un repère, la flèche s’y aligne',
+    direction: 'Direction du lancer',
+    rappelDirection: '0° : s’éloigne du Soleil · 90° : de côté · 180° : plonge vers lui',
+    sens: 'Sens de rotation',
+    antiHoraire: 'Sens inverse des aiguilles d’une montre',
+    horaire: 'Sens des aiguilles d’une montre',
+    saisie: (libelle: string) => `${libelle}, valeur`,
+    gestes: 'Avant le lancement, tu peux aussi glisser l’astre et tirer sa flèche de vitesse.',
+  },
+
+  forme: {
+    titre: 'Forme de la trajectoire',
+    excentricite: 'excentricité',
+    presque: 'presque',
+    collision: 'Attention : l’astre ira percuter le Soleil.',
+    jauge: (forme: string, e: string) => `Jauge de forme : ${forme}, excentricité ${e}`,
+    droite: 'Trajectoire droite',
+  },
+
+  mesuresOrbite: {
+    titre: 'Mesures de l’orbite',
+    demiGrandAxe: 'Demi-grand axe',
+    periode: 'Période',
+    perihelie: 'Périhélie',
+    aphelie: 'Aphélie',
+    vitesseLoin: 'Vitesse très loin',
+    deviation: 'Déviation',
+  },
+
+  afficher: {
+    titre: 'Afficher',
+    orbitePrevue: 'Orbite prévue',
+    perihelieAphelie: 'Périhélie / aphélie',
+    perihelie: 'Périhélie',
+    foyers: 'Foyers',
+    cercleReference: 'Cercle de référence',
+    asymptotes: 'Asymptotes',
+    loiDesAires: 'Loi des aires',
+    effacerTraces: 'Effacer les traces',
   },
 
   unites: {

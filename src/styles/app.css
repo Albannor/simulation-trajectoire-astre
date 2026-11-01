@@ -351,6 +351,16 @@
   font-weight: 600;
 }
 
+/* Ordinateur : la page tient dans la fenêtre ; seul le panneau défile (§ 7.1). */
+@media (min-width: 1100px) {
+  .app {
+    height: 100%;
+  }
+  .disposition {
+    grid-template-rows: minmax(0, 1fr);
+  }
+}
+
 @media (max-width: 1099px) {
   .disposition {
     grid-template-columns: 1fr;
@@ -382,4 +392,409 @@
   .libelle-court {
     display: inline;
   }
+}
+
+/* ——— Barre « Afficher » (F-M1-7) ——— */
+
+.barre-afficher {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.barre-afficher__titre {
+  color: var(--texte-secondaire);
+  font-weight: 600;
+  margin-right: 4px;
+}
+
+.bascule {
+  min-height: var(--cible-tactile);
+  padding: 0 18px;
+  border: 1px solid var(--bordure-forte);
+  border-radius: var(--rayon-pilule);
+  background: transparent;
+  color: var(--texte-secondaire);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.bascule[aria-pressed='true'] {
+  background: var(--fond-bulle);
+  border-color: var(--couleur-ellipse);
+  color: var(--texte);
+}
+
+.bascule--action:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ——— Panneau de réglages ——— */
+
+.section-panneau + .section-panneau,
+.section-panneau + .carte,
+.carte + .section-panneau {
+  margin-top: 28px;
+}
+
+.aide {
+  margin: 6px 0 0;
+  color: var(--texte-secondaire);
+  font-size: 0.9rem;
+}
+
+.ligne-aide {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.curseur + .curseur {
+  margin-top: 22px;
+}
+
+.curseur__entete {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.curseur__libelle {
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+.curseur__valeur {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.curseur__saisie {
+  min-height: var(--cible-tactile);
+  width: auto;
+  padding: 0 6px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--accent);
+  font-family: var(--police-nombre);
+  font-size: 1.35rem;
+  font-weight: 600;
+  text-align: right;
+}
+
+.curseur__saisie:hover,
+.curseur__saisie:focus {
+  border-color: var(--bordure-forte);
+  background: var(--fond-app);
+}
+
+.curseur__unite {
+  font-family: var(--police-nombre);
+  color: var(--texte-secondaire);
+}
+
+.curseur__glissiere {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: var(--cible-tactile);
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.curseur__glissiere::-webkit-slider-runnable-track {
+  height: 8px;
+  border-radius: var(--rayon-pilule);
+  background: linear-gradient(
+    to right,
+    var(--accent) var(--remplissage),
+    var(--bordure-forte) var(--remplissage)
+  );
+}
+
+.curseur__glissiere::-moz-range-track {
+  height: 8px;
+  border-radius: var(--rayon-pilule);
+  background: linear-gradient(
+    to right,
+    var(--accent) var(--remplissage),
+    var(--bordure-forte) var(--remplissage)
+  );
+}
+
+.curseur__glissiere::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 26px;
+  height: 26px;
+  margin-top: -9px;
+  border: 3px solid var(--fond-panneau);
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.curseur__glissiere::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border: 3px solid var(--fond-panneau);
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+/* Repères de vitesse cliquables (F-M1-3), positionnés sur l'échelle de la glissière. */
+.reperes {
+  position: relative;
+  height: 48px;
+  margin: 0 13px;
+}
+
+.reperes--deux-lignes {
+  height: 96px;
+}
+
+.repere {
+  position: absolute;
+  top: 4px;
+  transform: translateX(-50%);
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1.5px solid currentColor;
+  border-radius: var(--rayon-pilule);
+  background: var(--fond-panneau);
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.repere::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -10px;
+  height: 10px;
+  border-left: 2px solid currentColor;
+}
+
+.repere--bas {
+  top: 52px;
+}
+
+.repere--bas::before {
+  top: -58px;
+  height: 58px;
+}
+
+.repere--circulaire {
+  color: var(--couleur-cercle);
+}
+
+.repere--liberation {
+  color: var(--couleur-hyperbole);
+}
+
+.interrupteur--petit {
+  min-height: var(--cible-tactile);
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.interrupteur--petit .interrupteur__piste {
+  width: 40px;
+  height: 22px;
+}
+
+.interrupteur--petit .interrupteur__piste::after {
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+}
+
+.interrupteur--petit[aria-checked='true'] .interrupteur__piste::after {
+  transform: translateX(18px);
+}
+
+.sens {
+  display: flex;
+  gap: 6px;
+}
+
+.sens button {
+  width: var(--cible-tactile);
+  height: var(--cible-tactile);
+  border: 1px solid var(--bordure-forte);
+  border-radius: 50%;
+  background: transparent;
+  font-size: 1.3rem;
+  cursor: pointer;
+}
+
+.sens button[aria-pressed='true'] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--texte-sur-accent);
+}
+
+/* ——— Carte « Forme de la trajectoire » (F-M1-5) ——— */
+
+.carte {
+  padding: 20px 22px;
+  background: var(--fond-carte);
+  border: 1px solid var(--bordure-forte);
+  border-radius: 16px;
+}
+
+.carte h2 {
+  font-size: 1.25rem;
+}
+
+.forme {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 16px;
+  margin: 10px 0 16px;
+}
+
+.forme__nom {
+  font-family: var(--police-titre);
+  font-size: 2.3rem;
+  font-weight: 700;
+}
+
+.forme__presque {
+  font-size: 1.1rem;
+}
+
+.forme__e {
+  font-family: var(--police-nombre);
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.forme__detail {
+  color: var(--texte);
+}
+
+.forme--cercle .forme__nom {
+  color: var(--couleur-cercle);
+}
+.forme--ellipse .forme__nom {
+  color: var(--couleur-ellipse);
+}
+.forme--parabole .forme__nom {
+  color: var(--couleur-parabole);
+}
+.forme--hyperbole .forme__nom {
+  color: var(--couleur-hyperbole);
+}
+.forme--droite .forme__nom {
+  font-size: 1.6rem;
+}
+
+.jauge__piste {
+  position: relative;
+  display: flex;
+  gap: 4px;
+  height: 14px;
+  margin-top: 22px;
+}
+
+.jauge__segment {
+  border-radius: var(--rayon-pilule);
+  opacity: 0.35;
+}
+
+.jauge__segment[data-actif='true'] {
+  opacity: 1;
+}
+
+.jauge__segment--cercle {
+  background: var(--couleur-cercle);
+}
+.jauge__segment--ellipse {
+  background: var(--couleur-ellipse);
+}
+.jauge__segment--parabole {
+  background: var(--couleur-parabole);
+}
+.jauge__segment--hyperbole {
+  background: var(--couleur-hyperbole);
+}
+
+.jauge__repere {
+  position: absolute;
+  top: -16px;
+  transform: translateX(-50%);
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 12px solid var(--texte);
+}
+
+.jauge__legendes {
+  display: flex;
+  gap: 4px;
+  margin-top: 8px;
+  color: var(--texte-secondaire);
+  font-size: 0.85rem;
+}
+
+.jauge__legendes span[data-actif='true'] {
+  color: var(--texte);
+  font-weight: 700;
+}
+
+.avertissement {
+  margin: 14px 0 0;
+  padding: 10px 14px;
+  border: 1.5px solid var(--couleur-hyperbole);
+  border-radius: 10px;
+  color: var(--texte);
+  font-weight: 600;
+}
+
+/* ——— Mesures de l'orbite (F-M1-6) ——— */
+
+.mesures {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.mesure {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 16px;
+  background: var(--fond-carte);
+  border-radius: 12px;
+}
+
+.mesure__titre {
+  color: var(--texte-secondaire);
+  font-size: 0.9rem;
+}
+
+.mesure__valeur {
+  font-family: var(--police-nombre);
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.mesure__unite {
+  font-size: 0.9rem;
+  color: var(--texte-secondaire);
+}
+
+/* Le trait du repère de 2ᵉ ligne passe derrière la pastille de 1ʳᵉ ligne. */
+.repere:not(.repere--bas) {
+  z-index: 1;
 }

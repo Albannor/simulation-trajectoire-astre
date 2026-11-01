@@ -261,6 +261,45 @@ export function etatDepuisElements(d: ElementsDepart, mu: number = MU_SOLEIL): B
 }
 
 /**
+ * Second foyer (UA), le Soleil étant le premier à l'origine : F' = −2·a·e·ω̂ (ellipse : du côté de
+ * l'aphélie ; hyperbole, a < 0 : au-delà du périhélie). `null` si a est infini (parabole).
+ */
+export function foyerVide(el: OrbitElements): Vec2 | null {
+  if (!Number.isFinite(el.a)) return null;
+  return polar(el.omega, -2 * el.a * el.e);
+}
+
+/**
+ * Asymptotes d'une hyperbole : droites passant par le centre C = −a·e·ω̂ (à |a|·e du Soleil, au-delà
+ * du périhélie), de directions ω ± ν∞. `null` si e ≤ 1 ou si a est infini.
+ */
+export function asymptotes(
+  el: OrbitElements,
+): { readonly centre: Vec2; readonly directions: readonly [number, number] } | null {
+  if (el.e <= 1 || el.nuInfini === null || !Number.isFinite(el.a)) return null;
+  return {
+    centre: polar(el.omega, -el.a * el.e),
+    directions: [el.omega + el.nuInfini, el.omega - el.nuInfini],
+  };
+}
+
+/** Aire balayée par le rayon Soleil–astre pendant Δt (2ᵉ loi de Kepler) : |h|·Δt/2 (UA²). */
+export function aireBalayee(h: number, dt: number): number {
+  return (Math.abs(h) * dt) / 2;
+}
+
+/**
+ * Durée d'un secteur de la loi des aires (F-M1-8) : T/n pour une orbite liée, rp^(3/2)/n sinon
+ * (temps caractéristique au périhélie, en an avec rp en UA). `null` pour une trajectoire droite.
+ */
+export function dureeSecteur(el: OrbitElements, cl: Classification, n: number): number | null {
+  if (cl.type === 'droite') return null;
+  // Forme et non signe de ε : une « parabole » (D-17) légèrement liée a une période immense.
+  const fermee = cl.forme === 'cercle' || cl.forme === 'ellipse';
+  return fermee && el.periode !== null ? el.periode / n : el.rp ** 1.5 / n;
+}
+
+/**
  * Distance maximale atteinte sur une trajectoire droite liée (ε < 0) : r_max = −μ/ε.
  * `Infinity` si ε ≥ 0 (l'astre s'éloigne indéfiniment).
  */

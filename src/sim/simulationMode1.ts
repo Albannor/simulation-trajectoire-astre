@@ -8,6 +8,8 @@ import {
   DT_REEL_MAX,
   DUREE_PAS_REEL,
   NB_ANCIENNES_TRACES,
+  SECTEURS_CONSERVES,
+  SECTEURS_PAR_PERIODE,
   SEUIL_PRECISION,
   TEMPS_X1,
   TRAINEE_MAX,
@@ -18,6 +20,7 @@ import {
   type OrbitElements,
   type ShapeClass,
   classifier,
+  dureeSecteur,
   elements,
 } from '../physics/kepler';
 import {
@@ -31,6 +34,7 @@ import {
 } from '../physics/mode1';
 import { type SystemeNCorps } from '../physics/nbody';
 import { type EtatSimulation, actionPrincipale, transition } from './etats';
+import { Observable } from './observable';
 import { Trace } from './trace';
 
 /** Forme associée à une trace (pour sa couleur). */
@@ -45,13 +49,17 @@ export function formeDe(cl: Classification): FormeTrace {
   return cl.type === 'droite' ? 'droite' : cl.forme;
 }
 
-export class SimulationMode1 {
+/** Secteur de la loi des aires : points balayés (UA, entrelacés) pendant une durée Δt. */
+export interface Secteur {
+  /** Rang du secteur depuis le lancement (alternance des couleurs). */
+  readonly rang: number;
+  readonly points: number[];
+}
+
+export class SimulationMode1 extends Observable {
   private reglagesCourants: ReglagesMode1;
   private multiplicateurCourant: number;
   private etatCourant: EtatSimulation = 'edition';
-  private ecouteurs = new Set<() => void>();
-  /** Incrémenté à chaque changement discret (instantané pour useSyncExternalStore). */
-  private versionCourante = 0;
 
   depart!: BodyState;
   elements!: OrbitElements;
@@ -67,24 +75,15 @@ export class SimulationMode1 {
   /** Distance minimale entre deux points de trace (UA), fixée par la vue selon le zoom. */
   seuilTrace = 0.005;
 
+  /** Secteurs de la loi des aires (F-M1-8) : les derniers terminés puis celui en cours. */
+  secteurs: Secteur[] = [];
+  dureeSecteur: number | null = null;
+
   constructor(reglages: ReglagesMode1, multiplicateur: number) {
+    super();
     this.reglagesCourants = reglages;
     this.multiplicateurCourant = multiplicateur;
     this.reinitialiser();
-  }
-
-  // ——— Abonnement ———
-
-  abonner = (ecouteur: () => void): (() => void) => {
-    this.ecouteurs.add(ecouteur);
-    return () => this.ecouteurs.delete(ecouteur);
-  };
-
-  version = (): number => this.versionCourante;
-
-  private notifier(): void {
-    this.versionCourante++;
-    this.ecouteurs.forEach((f) => f());
   }
 
   // ——— Lecture ———
@@ -179,6 +178,8 @@ export class SimulationMode1 {
     this.depart = etatInitialMode1(this.reglagesCourants);
     this.elements = elements(this.depart);
     this.classification = classifier(this.depart);
+    this.dureeSecteur = dureeSecteur(this.elements, this.classification, SECTEURS_PAR_PERIODE);
+    this.secteurs = [];
     this.systeme = creerSystemeMode1(this.depart);
     this.fin = null;
     this.ralenti = false;
@@ -198,6 +199,26 @@ export class SimulationMode1 {
     }
     this.formeTrace = formeDe(this.classification);
     this.trace.ajouter(this.depart.r.x, this.depart.r.y);
+    this.secteurs =
+      this.dureeSecteur === null ? [] : [{ rang: 0, points: [this.depart.r.x, this.depart.r.y] }];
+  }
+
+  /** Ajoute la position courante au secteur de la loi des aires correspondant au temps t. */
+  private echantillonnerSecteur(t: number, x: number, y: number, seuil: number): void {
+    const duree = this.dureeSecteur;
+    const courant = this.secteurs[this.secteurs.length - 1];
+    if (duree === null || !courant) return;
+    const rang = Math.floor(t / duree);
+    if (rang !== courant.rang) {
+      // Frontière franchie : le point clôt le secteur courant et ouvre le suivant.
+      courant.points.push(x, y);
+      this.secteurs = [...this.secteurs, { rang, points: [x, y] }].slice(-(SECTEURS_CONSERVES + 1));
+      return;
+    }
+    const n = courant.points.length;
+    const dx = x - (courant.points[n - 2] ?? x);
+    const dy = y - (courant.points[n - 1] ?? y);
+    if (Math.hypot(dx, dy) >= seuil) courant.points.push(x, y);
   }
 
   private integrer(dtReel: number): void {
@@ -207,6 +228,7 @@ export class SimulationMode1 {
     const res = avancerMode1(this.systeme, duree, this.elements.energie, (s) => {
       const { r } = etatAstre(s);
       trace.ajouterSiEloigne(r.x, r.y, seuil);
+      this.echantillonnerSecteur(s.t, r.x, r.y, seuil);
     });
     this.systeme = res.systeme;
     this.ralenti = res.ralenti;

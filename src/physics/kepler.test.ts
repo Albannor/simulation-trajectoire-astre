@@ -3,12 +3,16 @@ import { R_COLLISION, TOL_PARABOLE } from '../config';
 import { MU_SOLEIL, degToRad, radToDeg } from './constants';
 import {
   type BodyState,
+  aireBalayee,
   anomalieVraie,
+  asymptotes,
   classifier,
   distanceMinEstimee,
+  dureeSecteur,
   echantillonnerConique,
   elements,
   etatDepuisElements,
+  foyerVide,
   parametreDepuisPeriapse,
   pointConique,
   positionJauge,
@@ -335,5 +339,66 @@ describe('distance minimale pour le pas adaptatif (D-13)', () => {
   });
   it('μ explicite', () => {
     expect(distanceMinEstimee(lancer(2, 5, 60), MU_SOLEIL)).toBeCloseTo(2, 12);
+  });
+});
+
+describe('repères géométriques (F-M1-7)', () => {
+  it('foyer vide d’une ellipse : du côté de l’aphélie, à 2c du Soleil', () => {
+    const el = elements(etatDepuisElements({ p: 1, e: 0.6, nu: 0.3, omega: 0.5, sens: 1 }));
+    const f = foyerVide(el)!;
+    expect(norm(f)).toBeCloseTo(2 * el.c!, 12);
+    // Le centre de l’ellipse est le milieu des deux foyers et le milieu périhélie–aphélie.
+    const peri = pointConique(el, 0);
+    const aph = pointConique(el, Math.PI);
+    expect((peri.x + aph.x) / 2).toBeCloseTo(f.x / 2, 12);
+    expect((peri.y + aph.y) / 2).toBeCloseTo(f.y / 2, 12);
+  });
+
+  it('foyer vide d’une hyperbole : au-delà du périhélie, à 2|a|e', () => {
+    const el = elements(lancer(3.99, 6.79, 159));
+    const f = foyerVide(el)!;
+    expect(norm(f)).toBeCloseTo(2 * Math.abs(el.a) * el.e, 12);
+    expect(Math.cos(Math.atan2(f.y, f.x) - el.omega)).toBeCloseTo(1, 12);
+  });
+
+  it('pas de second foyer pour une parabole exacte (a infini)', () => {
+    const el = elements(lancer(1, 1, 90));
+    expect(foyerVide({ ...el, a: Infinity })).toBeNull();
+  });
+
+  it('asymptotes : la branche tend vers des droites de directions ω ± ν∞ passant par le centre', () => {
+    const el = elements(lancer(3.99, 6.79, 159));
+    const as = asymptotes(el)!;
+    expect(norm(as.centre)).toBeCloseTo(Math.abs(el.a) * el.e, 12);
+    // Un point très loin sur la branche est proche de l’asymptote correspondante.
+    const loin = pointConique(el, el.nuInfini! - 1e-6);
+    for (const dir of as.directions) {
+      const u = { x: Math.cos(dir), y: Math.sin(dir) };
+      const d = { x: loin.x - as.centre.x, y: loin.y - as.centre.y };
+      const distance = Math.abs(d.x * u.y - d.y * u.x);
+      if (d.x * u.x + d.y * u.y > 0) expect(distance / norm(d)).toBeLessThan(1e-5);
+    }
+    expect(asymptotes(elements(lancer(1, 5, 90)))).toBeNull();
+  });
+
+  it('aire balayée et durée des secteurs (F-M1-8)', () => {
+    expect(aireBalayee(-2, 0.5)).toBe(0.5);
+    const ell = lancer(0.81, 8.43, 64);
+    expect(dureeSecteur(elements(ell), classifier(ell), 12)).toBeCloseTo(
+      elements(ell).periode! / 12,
+      12,
+    );
+    const hyp = lancer(3.99, 6.79, 159);
+    expect(dureeSecteur(elements(hyp), classifier(hyp), 12)).toBeCloseTo(
+      elements(hyp).rp ** 1.5 / 12,
+      12,
+    );
+    const presque = lancer(1, vLib(1) * 0.999, 90);
+    expect(classifier(presque)).toMatchObject({ forme: 'parabole' });
+    expect(dureeSecteur(elements(presque), classifier(presque), 12)).toBeCloseTo(
+      elements(presque).rp ** 1.5 / 12,
+      12,
+    );
+    expect(dureeSecteur(elements(lancer(1, 3, 0)), classifier(lancer(1, 3, 0)), 12)).toBeNull();
   });
 });
