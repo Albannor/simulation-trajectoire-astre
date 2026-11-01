@@ -7,7 +7,6 @@ export const fr = {
   app: {
     titre: 'Trajectoires',
     titreDocument: 'Trajectoires — simulation de trajectoires d’astres',
-    chargement: 'Chargement…',
   },
 
   entete: {
@@ -23,14 +22,12 @@ export const fr = {
     cercle: 'cercle',
     ellipse: 'ellipse',
     parabole: 'parabole',
-    presqueParabole: 'presque une parabole',
     hyperbole: 'hyperbole',
     droite: 'droite',
     // Cas radial (décision D-01, docs/DECISIONS.md).
     droiteTombe: 'L’astre tombe droit sur le Soleil',
     droiteRetombe: 'L’astre monte, s’arrête puis retombe droit sur le Soleil',
     droitePart: 'L’astre part en ligne droite',
-    collisionAnnoncee: 'ira percuter le Soleil',
   },
 
   commandes: {
@@ -289,6 +286,9 @@ export const fr = {
       'En des durées égales, l’astre balaie des surfaces égales\u00a0: il va donc plus vite près du Soleil.',
     perihelieAphelie:
       'Le périhélie est le point le plus proche du Soleil, l’aphélie le plus éloigné.',
+    // Décision D-39 : une orbite ouverte (parabole, hyperbole) n'a pas d'aphélie.
+    perihelieOrbiteOuverte:
+      'Le périhélie est le point le plus proche du Soleil. Une orbite ouverte n’a pas d’aphélie\u00a0: l’astre s’éloigne sans revenir.',
     centreDeMasse:
       'C’est le point d’équilibre du duo. Les deux corps tournent autour de lui, le plus léger fait la plus grande orbite.',
     corpsLies:
@@ -297,5 +297,3 @@ export const fr = {
       'Change de point de vue\u00a0: dans celui du centre de masse, le duo tourne sur place.',
   },
 } as const;
-
-export type Textes = typeof fr;

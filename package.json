@@ -36,6 +36,11 @@
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.72.1",
     "vite": "^8.3.5",
+    "vite-plugin-pwa": "^2.0.0",
     "vitest": "^5.0.5"
+  },
+  "description": "Simulateur de trajectoires d’astres pour un enfant de 12 ans : cercle, ellipse, parabole, hyperbole, et mode à deux corps.",
+  "engines": {
+    "node": ">=22.12"
   }
 }

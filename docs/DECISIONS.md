@@ -43,3 +43,25 @@ La spécification (`docs/SPECIFICATIONS.md`) n'est pas modifiée ; ce journal la
 | D-36 | 2026-11-01 | Téléphone (< 700 px, § 3.2) | Non optimisé, mais sans débordement : en-tête et commandes passent à la ligne, la page défile verticalement, canvas à 60 % de la hauteur. | Choix technique (J6) |
 | D-37 | 2026-11-01 | Tablette en paysage (écart au § 7.1) | En paysage (700–1099 px), le volet en bas laissait un canvas de 158 px (1024×768). Option 1 retenue : panneau de réglages à droite (320 px), comme sur ordinateur, sans poignée ; le volet en bas reste pour le portrait. Mesures : canvas de 343 px (1024×768) et 385 px (1080×810), sans débordement. | Commanditaire |
 | D-38 | 2026-11-01 | Repère « circulaire » (écart à F-M1-3, remplace la dernière phrase de D-22) | Cliquer sur le repère « circulaire » règle la vitesse sur `v_circ(r₀)` **et** la direction sur 90° (sens et position conservés) : l'orbite obtenue est toujours un cercle, ce que son nom annonce. Constat du commanditaire : avec seulement la vitesse, θ = 64° donnait une ellipse (e = 0,44) sous l'étiquette « circulaire ». Le repère « libération » ne règle que la vitesse (parabole quelle que soit la direction). | Commanditaire |
+| D-39 | 2026-11-01 | Bulle « périhélie / aphélie » (§ 6.7) | Pour une orbite ouverte (parabole, hyperbole) : « Le périhélie est le point le plus proche du Soleil. Une orbite ouverte n'a pas d'aphélie : l'astre s'éloigne sans revenir. » Texte de la spécification conservé pour l'ellipse. | Commanditaire |
+| D-40 | 2026-11-01 | Publication et PWA (§ 8.1, J7) | GitHub Pages via GitHub Actions (lint, tests, build avec `BASE_PATH=/<dépôt>/`, déploiement). PWA par `vite-plugin-pwa` : manifeste en français, icônes 192/512 px, service worker qui ne met en cache que les fichiers du site (vérifié : rechargement et simulation hors ligne, polices comprises). Le seul « http » restant dans `dist/` est un lien dans un message d'erreur de Workbox, jamais appelé. | Commanditaire |
+
+## Propositions de modification de la spécification
+
+Synthèse des points où la réalisation s'écarte de `SPECIFICATIONS.md` ou la précise ; à intégrer dans une version 1.1 si le commanditaire le souhaite (la spécification n'a pas été modifiée).
+
+| § | Proposition | Décision |
+|---|---|---|
+| 4.4 | Corriger le renvoi de la ligne `ETA` : § 5.7 (et non § 5.6). | D-10 |
+| 4.3 | Préciser : un négatif arrondi à zéro s'affiche « 0,00 » ; espace insécable avant « : ; ? ! » et dans « ». | D-12, D-31 |
+| 5.2 | Calculer `e` comme la norme du vecteur de Laplace–Runge–Lenz (la formule `√(1 + 2εh²/μ²)` perd la précision près du cercle). | D-16 |
+| 5.3 | Trajectoire droite : trois cas (tombe / monte puis retombe / part) selon le sens du mouvement et l'énergie. | D-01 |
+| 5.3 | « Ira percuter le Soleil » : pour une orbite ouverte, seulement à l'approche (r⃗·v⃗ < 0). | D-02 |
+| 5.3 | Bande « parabole » définie par `\|v₀²/v_lib² − 1\| ≤ TOL_PARABOLE/2` ; « presque » si `\|e − 1\| ≥ 1e-9`. | D-04, D-17 |
+| 5.7 | Indicateur de précision normalisé par `½v₀² + μ/r₀` ; distance minimale du pas `max(R_COLLISION, min(r, rp) à l'approche)` ; fins testées à chaque sous-pas ; temps réel plafonné à 0,1 s par image. | D-03, D-13, D-15, D-18 |
+| 6.3 | Repère « circulaire » : règle la vitesse **et** la direction (90°) ; aimant aussi sur la direction. | D-22, D-38 |
+| 6.5 | « Un visiteur qui passe » : départ sur la branche d'approche. | D-05 |
+| 6.7 | Bulle de libération « tout juste » ; bulle périhélie adaptée aux orbites ouvertes. | D-06, D-39 |
+| 7.1 | Tablette en paysage : panneau à droite (le volet en bas laisse un canvas de 158 px à 1024×768). | D-37 |
+| 9.1 | T-15 : distinguer « -2,31 » (tiret) et « −2,31 » (U+2212). Tolérances calibrées : voir les commentaires des tests. | D-08 |
+| 11 | Points ouverts 1, 2, 4, 5, 6, 7 : traités (sens ↺/↻, « Effacer les traces », « Annuler la dérive », vitesse du temps ×1, téléphone sans débordement). Point 5 (Halley près de la borne de vitesse) : la saisie au centième suffit. | D-27, D-36 |

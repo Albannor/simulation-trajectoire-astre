@@ -317,7 +317,11 @@ export function PanneauMode1({ sim, options }: Props) {
             )}
           </div>
           {options.valeurs.perihelieAphelie && cl.forme !== 'cercle' && (
-            <Bulle>{fr.bulles.perihelieAphelie}</Bulle>
+            <Bulle>
+              {cl.forme === 'ellipse'
+                ? fr.bulles.perihelieAphelie
+                : fr.bulles.perihelieOrbiteOuverte}
+            </Bulle>
           )}
           {options.valeurs.loiDesAires && <Bulle>{fr.bulles.loiDesAires}</Bulle>}
         </section>
