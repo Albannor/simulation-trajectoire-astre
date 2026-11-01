@@ -68,6 +68,12 @@ export default tseslint.config(
     },
   },
   {
+    // Dans les tests, une assertion non nulle qui se révélerait fausse fait échouer le test :
+    // elle est donc sans danger et évite des gardes qui masqueraient l'intention.
+    files: ['src/**/*.test.ts'],
+    rules: { '@typescript-eslint/no-non-null-assertion': 'off' },
+  },
+  {
     files: ['*.{js,ts}'],
     languageOptions: { globals: globals.node },
   },

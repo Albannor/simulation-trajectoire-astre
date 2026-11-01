@@ -48,3 +48,20 @@ export const SEUIL_PRECISION = 1e-4;
 
 /** Affichage de l'excentricité avec 3 décimales si |e − 1| < SEUIL_E_3_DECIMALES (§ 4.3). */
 export const SEUIL_E_3_DECIMALES = 0.05;
+
+/**
+ * Sous ce seuil, le vecteur excentricité est trop petit pour donner une direction de périhélie
+ * fiable : on prend la direction du point de départ (décision D-14).
+ */
+export const E_DIRECTION_INDEFINIE = 1e-10;
+
+/** Nombre de points d'échantillonnage de la trajectoire prévue (§ 5.4). */
+export const N_POINTS_CONIQUE = 400;
+
+/** Largeurs des 4 segments de la jauge de forme, en fraction (§ 5.3) : cercle, ellipse, parabole, hyperbole. */
+export const JAUGE_SEGMENTS = {
+  cercle: 0.14,
+  ellipse: 0.46,
+  parabole: 0.14,
+  hyperbole: 0.26,
+} as const;
