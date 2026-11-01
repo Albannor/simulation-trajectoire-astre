@@ -13,12 +13,19 @@ import { format, formatAngle, formatExcentricite } from '../format';
 import { fr } from '../i18n/fr';
 import { degToRad, radToDeg } from '../physics/constants';
 import { positionJauge, vCirc, vLib } from '../physics/kepler';
-import { type ReglagesMode1, verdictLiberation } from '../physics/mode1';
+import {
+  type ReglagesMode1,
+  calerCirculaire,
+  calerLiberation,
+  verdictLiberation,
+} from '../physics/mode1';
 import { type NomPresetMode1, presetMode1 } from '../physics/presets';
 import { type Options, type OptionsMode1 } from '../sim/options';
 import { type SimulationMode1 } from '../sim/simulationMode1';
 import { Bulle } from './Bulle';
+import { SectionPresets } from './SectionPresets';
 import { Curseur } from './Curseur';
+import { InfoBouton } from './InfoBouton';
 import { Jauge } from './Jauge';
 import { useVersion } from './useVersion';
 
@@ -55,7 +62,13 @@ function Mesure({ titre, valeur, unite }: { titre: string; valeur: string; unite
 }
 
 /** Repères « circulaire » et « libération » sous le curseur de vitesse (F-M1-3). */
-function ReperesVitesse({ r0, onCaler }: { r0: number; onCaler: (v: number) => void }) {
+function ReperesVitesse({
+  r0,
+  onCaler,
+}: {
+  r0: number;
+  onCaler: (repere: 'circulaire' | 'liberation') => void;
+}) {
   const reperes = [
     { cle: 'circulaire', v: vCirc(r0), aide: fr.lancement.repereCirculaire },
     { cle: 'liberation', v: vLib(r0), aide: fr.lancement.repereLiberation },
@@ -72,7 +85,7 @@ function ReperesVitesse({ r0, onCaler }: { r0: number; onCaler: (v: number) => v
           className={`repere repere--${r.cle} ${deuxLignes && i === 1 ? 'repere--bas' : ''}`}
           style={{ left: `${(r.v / V0_MAX) * 100}%` }}
           aria-label={r.aide(format(r.v))}
-          onClick={() => onCaler(r.v)}
+          onClick={() => onCaler(r.cle)}
         >
           {fr.lancement[r.cle]} {format(r.v)}
         </button>
@@ -90,8 +103,7 @@ export function PanneauMode1({ sim, options }: Props) {
 
   return (
     <>
-      <section className="section-panneau" aria-labelledby="titre-presets">
-        <h2 id="titre-presets">{fr.presets1.titre}</h2>
+      <SectionPresets titre={fr.presets1.titre}>
         <div className="pilules">
           {PRESETS.map((nom) => (
             <button
@@ -104,7 +116,7 @@ export function PanneauMode1({ sim, options }: Props) {
             </button>
           ))}
         </div>
-      </section>
+      </SectionPresets>
 
       <section className="section-panneau" aria-labelledby="titre-lancement">
         <h2 id="titre-lancement">{fr.lancement.titre}</h2>
@@ -131,7 +143,14 @@ export function PanneauMode1({ sim, options }: Props) {
           decimales={2}
           onChange={(v0) => modifier({ v0 })}
         >
-          <ReperesVitesse r0={reg.r0} onCaler={(v0) => modifier({ v0 })} />
+          <ReperesVitesse
+            r0={reg.r0}
+            onCaler={(repere) =>
+              sim.modifierReglages(
+                repere === 'circulaire' ? calerCirculaire(reg) : calerLiberation(reg),
+              )
+            }
+          />
           <div className="ligne-aide">
             <p className="aide">{fr.lancement.rappelTerre}</p>
             <button
@@ -139,12 +158,12 @@ export function PanneauMode1({ sim, options }: Props) {
               role="switch"
               className="interrupteur interrupteur--petit"
               aria-checked={options.valeurs.aimant}
-              title={fr.lancement.aimantDetail}
               onClick={() => options.definir('aimant', !options.valeurs.aimant)}
             >
               {fr.lancement.aimant}
               <span className="interrupteur__piste" aria-hidden="true" />
             </button>
+            <InfoBouton libelle={fr.lancement.aimantInfo}>{fr.lancement.aimantDetail}</InfoBouton>
           </div>
           <Bulle>
             {fr.bulles.liberation(format(vLib(reg.r0)), format(reg.v0), verdictLiberation(reg, cl))}

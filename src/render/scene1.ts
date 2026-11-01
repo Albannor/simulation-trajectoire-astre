@@ -29,6 +29,8 @@ const ORIGINE = { x: 0, y: 0 };
 const DECALAGE_ETIQUETTE_PX = 6;
 /** Demi-hauteur approximative d'une ligne de texte de 14 px. */
 const DEMI_HAUTEUR_TEXTE_PX = 8;
+/** En deçà de cette longueur du trait Soleil–astre (px), la distance n'est pas écrite sur la scène. */
+const LONGUEUR_MIN_ETIQUETTE_PX = 90;
 
 /**
  * Boîte du cadrage automatique (F-SIM-4) : ellipse (ou cercle) entière ; orbite ouverte jusqu'à
@@ -300,15 +302,19 @@ export function dessinerScene1(
   const ny = (-sensNormale * dx) / longueur;
   const decalage =
     DECALAGE_ETIQUETTE_PX + Math.abs(nx) * demiLargeur + Math.abs(ny) * DEMI_HAUTEUR_TEXTE_PX;
-  etiquette(
-    ctx,
-    texteDistance,
-    (soleil.x + pAstre.x) / 2 + nx * decalage,
-    (soleil.y + pAstre.y) / 2 + ny * decalage,
-    theme.texte,
-    theme.polices.valeur,
-    'center',
-  );
+  // Trait trop court à l'écran : la valeur chevaucherait le Soleil et l'astre ; la tuile
+  // « Distance » l'affiche de toute façon.
+  if (longueur >= LONGUEUR_MIN_ETIQUETTE_PX) {
+    etiquette(
+      ctx,
+      texteDistance,
+      (soleil.x + pAstre.x) / 2 + nx * decalage,
+      (soleil.y + pAstre.y) / 2 + ny * decalage,
+      theme.texte,
+      theme.polices.valeur,
+      'center',
+    );
+  }
 
   // Soleil (22 px, sans échelle — F-SIM-5).
   ctx.globalAlpha = 0.18;

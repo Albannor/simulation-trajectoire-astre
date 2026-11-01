@@ -202,3 +202,16 @@ export function verdictLiberation(
   if (cl.type === 'conique' && cl.forme === 'parabole') return 'toutJuste';
   return reg.v0 > vLib(reg.r0, mu) ? 'assez' : 'pasAssez';
 }
+
+/**
+ * Repère « circulaire » (F-M1-3, décision D-38) : vitesse circulaire à r₀ **et** direction 90°,
+ * pour que l'orbite obtenue soit vraiment un cercle (le sens et la position sont conservés).
+ */
+export function calerCirculaire(reg: ReglagesMode1, mu: number = MU_SOLEIL): ReglagesMode1 {
+  return { ...reg, v0: vCirc(reg.r0, mu), theta: Math.PI / 2 };
+}
+
+/** Repère « libération » (F-M1-3) : seule la vitesse change (parabole quelle que soit θ). */
+export function calerLiberation(reg: ReglagesMode1, mu: number = MU_SOLEIL): ReglagesMode1 {
+  return { ...reg, v0: vLib(reg.r0, mu) };
+}

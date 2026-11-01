@@ -24,6 +24,9 @@ export function rayonCorpsPx(masse: number): number {
   );
 }
 
+/** Distance minimale (px) entre le centre d'une étiquette et un corps pour la garder en place. */
+const DEGAGEMENT_ETIQUETTE_PX = 60;
+
 const COULEURS: Record<NomCorps, string> = { a: theme.corpsA, b: theme.corpsB };
 
 /** Position affichée d'un corps : r⃗ − O, l'origine étant calculée aux mêmes instants. */
@@ -227,7 +230,11 @@ export function dessinerScene2(
     ctx.strokeStyle = theme.texte;
     ctx.lineWidth = 2;
     croix(ctx, pg, 12);
-    etiquette(ctx, fr.scene2.centreDeMasse, pg.x - 16, pg.y - 26, theme.texte, undefined, 'right');
+    // Étiquette au-dessus à gauche de la croix, ou en dessous si un corps y est déjà.
+    const libre = (y: number) =>
+      [pA, pB].every((p) => Math.hypot(p.x - (pg.x - 70), p.y - y) > DEGAGEMENT_ETIQUETTE_PX);
+    const yEtiquette = libre(pg.y - 26) ? pg.y - 26 : pg.y + 28;
+    etiquette(ctx, fr.scene2.centreDeMasse, pg.x - 16, yEtiquette, theme.texte, undefined, 'right');
   }
 
   // Départs et flèches de vitesse : en Édition, flèches toujours visibles (D-24).

@@ -5,6 +5,8 @@ import { vCirc, vLib } from './kepler';
 import {
   type ReglagesMode1,
   appliquerAimant,
+  calerCirculaire,
+  calerLiberation,
   etatInitialMode1,
   reglagesDepuisFleche,
   reglagesDepuisPosition,
@@ -73,5 +75,20 @@ describe('verdict de la bulle « vitesse de libération » (§ 6.7, D-06)', () =
     expect(verdict(3)).toBe('pasAssez');
     expect(verdict(vLib(3.99))).toBe('toutJuste');
     expect(verdict(vLib(3.99) * 1.001)).toBe('toutJuste');
+  });
+});
+
+describe('repères cliquables (F-M1-3, D-38)', () => {
+  const depart = { ...REG, r0: 2, theta: degToRad(64), sens: -1 as const };
+  it('« circulaire » donne un vrai cercle, quelle que soit la direction de départ', () => {
+    const reg = calerCirculaire(depart);
+    expect(reg.theta).toBe(Math.PI / 2);
+    expect(reg.sens).toBe(-1);
+    expect(classifier(etatInitialMode1(reg))).toMatchObject({ forme: 'cercle' });
+  });
+  it('« libération » donne une parabole sans changer la direction', () => {
+    const reg = calerLiberation(depart);
+    expect(reg.theta).toBe(depart.theta);
+    expect(classifier(etatInitialMode1(reg))).toMatchObject({ forme: 'parabole' });
   });
 });

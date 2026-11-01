@@ -112,3 +112,18 @@ export function rayonVisible(cam: Camera, centre: Point): number {
   ];
   return Math.max(...coins.map((c) => Math.hypot(c.x - centre.x, c.y - centre.y)));
 }
+
+/**
+ * Pincement à deux doigts (F-SIM-3) : les doigts passent de (a1, a2) à (b1, b2) (px écran).
+ * Zoom du rapport des écartements autour du milieu initial, puis déplacement du milieu :
+ * le point du monde sous le milieu des doigts reste sous leur milieu.
+ */
+export function pincer(cam: Camera, a1: Point, a2: Point, b1: Point, b2: Point): Camera {
+  const ecartA = Math.hypot(a2.x - a1.x, a2.y - a1.y);
+  const ecartB = Math.hypot(b2.x - b1.x, b2.y - b1.y);
+  const milieuA = { x: (a1.x + a2.x) / 2, y: (a1.y + a2.y) / 2 };
+  const milieuB = { x: (b1.x + b2.x) / 2, y: (b1.y + b2.y) / 2 };
+  const facteur = ecartA > 0 ? ecartB / ecartA : 1;
+  const zoome = zoomerAutour(cam, facteur, milieuA.x, milieuA.y);
+  return deplacer(zoome, milieuB.x - milieuA.x, milieuB.y - milieuA.y);
+}

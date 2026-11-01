@@ -95,9 +95,15 @@ export function Commandes({ sim, vue }: Props) {
         >
           <IconePlus />
         </button>
-        <button type="button" className="bouton-pilule" onClick={() => vue.recentrer()}>
+        <button
+          type="button"
+          className="bouton-pilule bouton-recentrer"
+          aria-label={fr.commandes.recentrer}
+          onClick={() => vue.recentrer()}
+        >
           <IconeRecentrer />
-          {fr.commandes.recentrer}
+          {/* Sur tablette, l'icône seule (maquette 4) ; le nom accessible reste « Recentrer ». */}
+          <span className="bouton-recentrer__texte">{fr.commandes.recentrer}</span>
         </button>
       </div>
     </div>

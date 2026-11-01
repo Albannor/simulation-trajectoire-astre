@@ -5,7 +5,16 @@
  */
 
 import { FACTEUR_ZOOM_BOUTON, MARGE_CADRAGE_PX } from '../config';
-import { type Boite, type Camera, cadrer, deplacer, redimensionner, zoomerAutour } from './camera';
+import {
+  type Boite,
+  type Camera,
+  type Point,
+  cadrer,
+  deplacer,
+  pincer,
+  redimensionner,
+  zoomerAutour,
+} from './camera';
 
 export class Vue {
   camera: Camera = { cx: 0, cy: 0, echelle: 100, largeur: 1, hauteur: 1 };
@@ -64,6 +73,12 @@ export class Vue {
   deplacer(dx: number, dy: number): void {
     this.manuel = true;
     this.camera = deplacer(this.camera, dx, dy);
+  }
+
+  /** Pincement à deux doigts (F-SIM-3). */
+  pincer(a1: Point, a2: Point, b1: Point, b2: Point): void {
+    this.manuel = true;
+    this.camera = pincer(this.camera, a1, a2, b1, b2);
   }
 
   private cadrerAuto(): void {

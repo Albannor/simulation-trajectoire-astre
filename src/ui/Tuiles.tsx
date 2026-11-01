@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { format } from '../format';
 import { fr } from '../i18n/fr';
 import { type SimulationBase } from '../sim/simulationBase';
+import { InfoBouton } from './InfoBouton';
 import { useIntervalle } from './useIntervalle';
 
 export interface MesureTuile {
@@ -40,16 +41,23 @@ export function Tuiles({ sim, lire }: Props) {
         </div>
       ))}
       <div className="indicateurs">
-        <span
+        <InfoBouton
+          libelle={fr.mesures.precisionCorrecte}
+          contenu={
+            m.precisionCorrecte ? fr.mesures.precisionCorrecte : fr.mesures.precisionDegradee
+          }
           className={`pastille ${m.precisionCorrecte ? 'pastille--ok' : 'pastille--alerte'}`}
-          title={fr.mesures.precisionDetail(m.ecart)}
         >
-          {m.precisionCorrecte ? fr.mesures.precisionCorrecte : fr.mesures.precisionDegradee}
-        </span>
+          {fr.mesures.precisionDetail(m.ecart)}
+        </InfoBouton>
         {m.ralenti && (
-          <span className="pastille pastille--alerte" title={fr.mesures.ralentiDetail}>
-            {fr.mesures.ralenti}
-          </span>
+          <InfoBouton
+            libelle={fr.mesures.ralenti}
+            contenu={fr.mesures.ralenti}
+            className="pastille pastille--alerte"
+          >
+            {fr.mesures.ralentiDetail}
+          </InfoBouton>
         )}
       </div>
     </div>

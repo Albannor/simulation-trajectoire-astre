@@ -4,6 +4,7 @@ import {
   boiteDe,
   cadrer,
   deplacer,
+  pincer,
   rayonVisible,
   versEcran,
   versMonde,
@@ -57,6 +58,24 @@ describe('caméra', () => {
       ymin: -1,
       ymax: 4,
     });
+  });
+
+  it('pincement : le point sous le milieu des doigts suit leur milieu', () => {
+    const a1 = { x: 300, y: 300 };
+    const a2 = { x: 500, y: 300 };
+    const b1 = { x: 250, y: 350 };
+    const b2 = { x: 650, y: 350 };
+    const sous = versMonde(cam, 400, 300);
+    const p = pincer(cam, a1, a2, b1, b2);
+    expect(p.echelle).toBeCloseTo(200, 12);
+    const apres = versEcran(p, sous.x, sous.y);
+    expect(apres.x).toBeCloseTo(450, 9);
+    expect(apres.y).toBeCloseTo(350, 9);
+  });
+
+  it('pincement dégénéré (doigts confondus) : simple déplacement', () => {
+    const p = pincer(cam, { x: 1, y: 1 }, { x: 1, y: 1 }, { x: 11, y: 1 }, { x: 11, y: 1 });
+    expect(p.echelle).toBe(cam.echelle);
   });
 
   it('rayon visible depuis un point', () => {

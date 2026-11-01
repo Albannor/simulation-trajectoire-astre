@@ -146,6 +146,12 @@ export const fr = {
     vitesse: 'Vitesse relative',
   },
 
+  volet: {
+    replier: 'Replier les réglages',
+    deplier: 'Afficher les réglages',
+    preReglages: 'Préréglages',
+  },
+
   presets1: {
     titre: 'Choisis un astre',
     terre: 'Terre',
@@ -164,9 +170,11 @@ export const fr = {
     rappelTerre: 'Repère : la Terre va à 6,28 UA/an',
     circulaire: 'circulaire',
     liberation: 'libération',
-    repereCirculaire: (v: string) => `Caler la vitesse sur la vitesse circulaire, ${v} UA/an`,
+    repereCirculaire: (v: string) =>
+      `Obtenir une orbite circulaire\u00a0: vitesse ${v} UA/an et direction 90°`,
     repereLiberation: (v: string) => `Caler la vitesse sur la vitesse de libération, ${v} UA/an`,
     aimant: 'Aimant',
+    aimantInfo: 'À quoi sert l’aimant ?',
     aimantDetail: 'Près d’un repère, la flèche s’y aligne',
     direction: 'Direction du lancer',
     rappelDirection: '0° : s’éloigne du Soleil · 90° : de côté · 180° : plonge vers lui',

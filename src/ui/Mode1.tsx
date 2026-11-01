@@ -13,6 +13,7 @@ import { interactionMode1 } from './interactionMode1';
 import { PanneauMode1 } from './PanneauMode1';
 import { Tuiles } from './Tuiles';
 import { useClavier } from './useClavier';
+import { Volet } from './Volet';
 import { VueSimulation } from './VueSimulation';
 
 interface Props {
@@ -51,9 +52,9 @@ export function Mode1({ sim, vue, options }: Props) {
         </VueSimulation>
         <Commandes sim={sim} vue={vue} />
       </section>
-      <aside className="panneau" aria-label={fr.lancement.titre}>
+      <Volet titre={fr.lancement.titre}>
         <PanneauMode1 sim={sim} options={options} />
-      </aside>
+      </Volet>
     </div>
   );
 }

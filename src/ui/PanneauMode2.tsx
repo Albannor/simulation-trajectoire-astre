@@ -8,6 +8,7 @@ import { type NomCorps, type PointDeVue } from '../render/referentiel';
 import { type Options, type OptionsMode2 } from '../sim/options';
 import { type SimulationMode2 } from '../sim/simulationMode2';
 import { Bulle } from './Bulle';
+import { SectionPresets } from './SectionPresets';
 import { ChampNombre } from './ChampNombre';
 import { Curseur } from './Curseur';
 import { useVersion } from './useVersion';
@@ -62,8 +63,7 @@ export function PanneauMode2({ sim, options }: Props) {
 
   return (
     <>
-      <section className="section-panneau" aria-labelledby="titre-presets2">
-        <h2 id="titre-presets2">{fr.presets2.titre}</h2>
+      <SectionPresets titre={fr.presets2.titre}>
         <div className="pilules">
           {PRESETS.map((p) => (
             <button
@@ -76,7 +76,7 @@ export function PanneauMode2({ sim, options }: Props) {
             </button>
           ))}
         </div>
-      </section>
+      </SectionPresets>
 
       <section className="section-panneau" aria-labelledby="titre-lancement2">
         <h2 id="titre-lancement2">{fr.lancement.titre}</h2>

@@ -356,27 +356,80 @@
   }
 }
 
+/* Poignée du volet et bouton « Préréglages » : tablette seulement. */
+.poignee,
+.bouton-presets {
+  display: none;
+}
+
+/* ——— Tablette (700–1099 px, portrait et paysage, § 7.1) ——— */
 @media (max-width: 1099px) {
-  .disposition {
-    grid-template-columns: 1fr;
-    grid-template-rows: minmax(0, 1fr) auto;
+  .app {
+    height: 100%;
+    height: 100dvh;
   }
-  .panneau {
-    border-left: 0;
-    border-top: 1px solid var(--bordure);
-    border-radius: 20px 20px 0 0;
+  .contenu {
+    overflow: hidden;
+  }
+  .disposition {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
   }
   .colonne-simulation {
-    padding: 12px 16px;
+    flex: 1;
+    min-height: 0;
+    gap: 10px;
+    padding: 10px 16px;
+  }
+  /* Maquette 4 : tuiles au-dessus de la barre « Afficher ». */
+  .tuiles {
+    order: -1;
+    gap: 8px;
+  }
+  .tuile {
+    min-width: 0;
+    flex: 1;
+    padding: 6px 14px;
+  }
+  .tuile__valeur {
+    font-size: 1.3rem;
   }
   .vue-simulation {
-    min-height: 420px;
+    min-height: 160px;
   }
   .commandes__libelle {
     display: none;
   }
+  /* Commandes sur une seule ligne (maquette 4). */
+  .commandes {
+    flex-wrap: nowrap;
+    gap: 8px;
+  }
+  .commandes__groupe {
+    gap: 8px;
+  }
+  .bouton-principal {
+    min-width: 0;
+    min-height: 52px;
+    padding: 0 20px;
+  }
+  .commandes .bouton-rond,
+  .commandes .bouton-pilule {
+    width: 52px;
+    height: 52px;
+    min-height: 52px;
+    padding: 0;
+    justify-content: center;
+  }
+  .bouton-recentrer__texte {
+    display: none;
+  }
+  .segments button {
+    min-width: 52px;
+  }
   .entete {
-    padding: 8px 16px;
+    padding: 6px 16px;
   }
   .selecteur-mode button {
     padding: 0 16px;
@@ -386,6 +439,74 @@
   }
   .libelle-court {
     display: inline;
+  }
+
+  /* Volet de réglages en bas, déplié par défaut, repliable par la poignée. */
+  .panneau {
+    display: flex;
+    flex-direction: column;
+    max-height: 38dvh;
+    padding: 0 20px;
+    border-left: 0;
+    border-top: 1px solid var(--bordure-forte);
+    border-radius: 20px 20px 0 0;
+    overflow: hidden;
+  }
+  .poignee {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+    min-height: var(--cible-tactile);
+    padding: 8px 0 4px;
+    border: 0;
+    background: transparent;
+    color: var(--texte-secondaire);
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+  .poignee__barre {
+    width: 56px;
+    height: 5px;
+    border-radius: var(--rayon-pilule);
+    background: var(--bordure-forte);
+  }
+  .panneau__contenu {
+    overflow-y: auto;
+    padding-bottom: 20px;
+    columns: 2 320px;
+    column-gap: 28px;
+  }
+  .panneau[data-replie='true'] .panneau__contenu {
+    display: none;
+  }
+  .panneau__contenu > * {
+    break-inside: avoid;
+  }
+  .section-panneau + .section-panneau,
+  .section-panneau + .carte,
+  .carte + .section-panneau {
+    margin-top: 0;
+    margin-bottom: 24px;
+  }
+  .section-panneau,
+  .carte {
+    margin-bottom: 24px;
+  }
+  /* Préréglages : ouverts par le bouton (D-09), sur toute la largeur du volet. */
+  .section-presets {
+    column-span: all;
+    margin-bottom: 16px;
+  }
+  .bouton-presets {
+    display: inline-flex;
+  }
+  .section-presets[data-ouverte='false'] .section-presets__contenu {
+    display: none;
+  }
+  .section-presets__contenu {
+    margin-top: 12px;
   }
 }
 
@@ -546,19 +667,19 @@
 /* Repères de vitesse cliquables (F-M1-3), positionnés sur l'échelle de la glissière. */
 .reperes {
   position: relative;
-  height: 48px;
+  height: 52px;
   margin: 0 13px;
 }
 
 .reperes--deux-lignes {
-  height: 96px;
+  height: 104px;
 }
 
 .repere {
   position: absolute;
   top: 4px;
   transform: translateX(-50%);
-  min-height: 40px;
+  min-height: var(--cible-tactile);
   padding: 0 12px;
   border: 1.5px solid currentColor;
   border-radius: var(--rayon-pilule);
@@ -579,12 +700,12 @@
 }
 
 .repere--bas {
-  top: 52px;
+  top: 56px;
 }
 
 .repere--bas::before {
-  top: -58px;
-  height: 58px;
+  top: -62px;
+  height: 62px;
 }
 
 .repere--circulaire {
@@ -1028,4 +1149,129 @@
 .boite-aide__section p {
   margin: 8px 0 0;
   line-height: 1.5;
+}
+
+/* ——— Informations au toucher (§ 7.1) ——— */
+
+.info {
+  position: relative;
+  display: inline-flex;
+}
+
+.bouton-info {
+  width: var(--cible-tactile);
+  height: var(--cible-tactile);
+  border: 1px solid var(--bordure-forte);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--texte-secondaire);
+  font-family: var(--police-titre);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.info__texte {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 5;
+  width: max-content;
+  max-width: 280px;
+  padding: 10px 12px;
+  background: var(--fond-bulle);
+  border: 1px solid var(--bordure-bulle);
+  border-radius: 10px;
+  color: var(--texte);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.info__texte--ligne {
+  position: static;
+  flex-basis: 100%;
+  width: auto;
+  max-width: none;
+  margin: 0;
+}
+
+.pastille {
+  min-height: var(--cible-tactile);
+  background: transparent;
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+/* ——— Tablette en paysage (décision D-37, option 1) : panneau à droite comme sur ordinateur,
+   plus étroit, sans volet ; le volet en bas reste pour le portrait. ——— */
+@media (min-width: 700px) and (max-width: 1099px) and (orientation: landscape) {
+  .disposition {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    grid-template-rows: minmax(0, 1fr);
+  }
+  .panneau {
+    max-height: none;
+    padding: 16px 20px;
+    border-top: 0;
+    border-left: 1px solid var(--bordure);
+    border-radius: 0;
+    overflow-y: auto;
+  }
+  .poignee {
+    display: none;
+  }
+  .panneau[data-replie='true'] .panneau__contenu {
+    display: block;
+  }
+  .panneau__contenu {
+    columns: auto;
+    overflow: visible;
+  }
+  .section-presets {
+    column-span: none;
+  }
+  /* Panneau étroit : les commandes peuvent passer à la ligne. */
+  .commandes {
+    flex-wrap: wrap;
+  }
+}
+
+/* ——— Téléphone (< 700 px) : hors périmètre V1, mais rien ne doit déborder (§ 3.2, § 11 point 7).
+   La page défile verticalement ; l'en-tête et les commandes passent à la ligne. ——— */
+@media (max-width: 699px) {
+  .app {
+    height: auto;
+    min-height: 100%;
+  }
+  .contenu {
+    overflow: visible;
+  }
+  .entete {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .entete__marque {
+    font-size: 1.3rem;
+  }
+  .colonne-simulation {
+    flex: none;
+  }
+  .vue-simulation {
+    flex: none;
+    height: 60vh;
+  }
+  .commandes {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .panneau {
+    max-height: none;
+  }
+  .panneau__contenu {
+    overflow: visible;
+  }
+  .tuile {
+    flex-basis: 30%;
+  }
 }
