@@ -65,3 +65,44 @@ export const JAUGE_SEGMENTS = {
   parabole: 0.14,
   hyperbole: 0.26,
 } as const;
+
+// ——— Simulation et affichage (J2) ———
+
+/** Plafond du temps réel pris en compte entre deux images (s) — décision D-18. */
+export const DT_REEL_MAX = 0.1;
+
+/** Durée réelle d'un « pas » (F-SIM-1) : ≈ 1/60 s à la vitesse courante. */
+export const DUREE_PAS_REEL = 1 / 60;
+
+/** Nombre d'anciennes traces conservées en atténué (F-APP-5). */
+export const NB_ANCIENNES_TRACES = 3;
+
+/** Distance écran minimale entre deux points de trace (px). */
+export const TRACE_SEUIL_PX = 1.5;
+
+/** Fréquence de rafraîchissement des mesures affichées (Hz, § 8.3). */
+export const MESURES_HZ = 10;
+
+/** Rayons de dessin, sans échelle (F-SIM-5), en px CSS. */
+export const RAYON_SOLEIL_PX = 22;
+export const RAYON_ASTRE_PX = 10;
+
+/** Flèche de vitesse (F-M1-2) : px par UA/an, bornée. */
+export const FLECHE_PX_PAR_VITESSE = 12;
+export const FLECHE_MIN_PX = 10;
+export const FLECHE_MAX_PX = 200;
+
+/** Marge du cadrage automatique autour de la scène (px CSS). */
+export const MARGE_CADRAGE_PX = 48;
+
+/** Bornes du zoom (px par UA) et facteur des boutons ± et de la molette. */
+export const ECHELLE_MIN = 0.5;
+export const ECHELLE_MAX = 20_000;
+export const FACTEUR_ZOOM_BOUTON = 1.25;
+export const FACTEUR_ZOOM_MOLETTE = 1.0015;
+
+/**
+ * Réglages du mode 1 au premier démarrage (décision D-20) : ellipse de la maquette 1
+ * (e ≈ 0,60), orientée périhélie à droite. Angles en degrés (saisie), convertis à l'usage.
+ */
+export const REGLAGES_DEFAUT_MODE1 = { r0: 0.81, v0: 8.43, thetaDeg: 64, sens: 1 } as const;

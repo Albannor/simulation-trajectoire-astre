@@ -261,6 +261,15 @@ export function etatDepuisElements(d: ElementsDepart, mu: number = MU_SOLEIL): B
 }
 
 /**
+ * Distance maximale atteinte sur une trajectoire droite liée (ε < 0) : r_max = −μ/ε.
+ * `Infinity` si ε ≥ 0 (l'astre s'éloigne indéfiniment).
+ */
+export function rayonMaxRadial(etat: BodyState, mu: number = MU_SOLEIL): number {
+  const energie = dot(etat.v, etat.v) / 2 - mu / norm(etat.r);
+  return energie < 0 ? -mu / energie : Infinity;
+}
+
+/**
  * Distance minimale à retenir pour le pas adaptatif d'une image (§ 5.7, décision D-13) :
  * à l'approche, le périhélie peut être franchi pendant l'image → min(r, rp) ; sinon r.
  * Bornée inférieurement par R_COLLISION (la simulation s'arrête de toute façon en deçà).

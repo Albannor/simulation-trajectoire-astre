@@ -21,6 +21,14 @@
   font-size: 1.6rem;
 }
 
+.entete__marque h1 {
+  font-size: inherit;
+}
+
+.libelle-court {
+  display: none;
+}
+
 .selecteur-mode {
   display: flex;
   padding: 4px;
@@ -103,17 +111,275 @@
 
 .contenu {
   flex: 1;
-  display: grid;
-  place-items: center;
-  background: var(--fond-simulation);
+  min-height: 0;
+  display: flex;
+}
+
+.a-venir {
+  margin: auto;
   color: var(--texte-secondaire);
 }
 
+/* ——— Disposition (§ 7.1) ——— */
+
+.disposition {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 380px;
+}
+
+.colonne-simulation {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+  min-height: 0;
+  padding: 20px 24px;
+}
+
+.panneau {
+  padding: 24px 28px;
+  background: var(--fond-panneau);
+  border-left: 1px solid var(--bordure);
+  overflow-y: auto;
+}
+
+.panneau h2 {
+  font-size: 1.35rem;
+  margin-bottom: 16px;
+}
+
+.pilules {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.note {
+  color: var(--texte-secondaire);
+  font-size: 0.9rem;
+}
+
+/* ——— Tuiles de mesures (F-SIM-6) ——— */
+
+.tuiles {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 12px;
+}
+
+.tuile {
+  display: flex;
+  flex-direction: column;
+  min-width: 160px;
+  padding: 10px 18px;
+  background: var(--fond-entete);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon-carte);
+}
+
+.tuile__titre {
+  color: var(--texte-secondaire);
+  font-size: 0.9rem;
+}
+
+.tuile__valeur {
+  font-family: var(--police-nombre);
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+.tuile__unite {
+  font-family: var(--police-texte);
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: var(--texte-secondaire);
+}
+
+.indicateurs {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.pastille {
+  padding: 2px 10px;
+  border-radius: var(--rayon-pilule);
+  border: 1px solid currentColor;
+  font-size: 0.85rem;
+  cursor: help;
+}
+
+.pastille--ok {
+  color: var(--couleur-cercle);
+}
+
+.pastille--alerte {
+  color: var(--couleur-hyperbole);
+}
+
+/* ——— Zone de dessin ——— */
+
+.vue-simulation {
+  position: relative;
+  flex: 1;
+  min-height: 320px;
+  border: 1px solid var(--bordure);
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--fond-simulation);
+}
+
+.vue-simulation__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  cursor: grab;
+}
+
+.vue-simulation__canvas:active {
+  cursor: grabbing;
+}
+
+.vue-simulation__fin {
+  position: absolute;
+  left: 50%;
+  top: 20px;
+  transform: translateX(-50%);
+  margin: 0;
+  font-family: var(--police-titre);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--couleur-hyperbole);
+  pointer-events: none;
+}
+
+/* ——— Commandes ——— */
+
+.commandes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+}
+
+.commandes__groupe {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.commandes__libelle {
+  color: var(--texte-secondaire);
+  font-weight: 600;
+}
+
+.bouton-principal {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 56px;
+  min-width: 150px;
+  padding: 0 26px;
+  border: 0;
+  border-radius: var(--rayon-pilule);
+  background: var(--accent);
+  color: var(--texte-sur-accent);
+  font-size: 1.15rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.commandes .bouton-rond {
+  width: 56px;
+  height: 56px;
+  display: inline-grid;
+  place-items: center;
+}
+
+.bouton-rond:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.bouton-pilule {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--cible-tactile);
+  padding: 0 20px;
+  border: 1px solid var(--bordure-forte);
+  border-radius: var(--rayon-pilule);
+  background: transparent;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.commandes .bouton-pilule {
+  min-height: 56px;
+}
+
+.segments {
+  display: flex;
+  padding: 4px;
+  border: 1px solid var(--bordure-forte);
+  border-radius: var(--rayon-pilule);
+}
+
+.segments button {
+  min-width: 64px;
+  min-height: 48px;
+  border: 0;
+  border-radius: var(--rayon-pilule);
+  background: transparent;
+  font-family: var(--police-nombre);
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.segments button[aria-pressed='true'] {
+  background: var(--accent);
+  color: var(--texte-sur-accent);
+  font-weight: 600;
+}
+
 @media (max-width: 1099px) {
+  .disposition {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 1fr) auto;
+  }
+  .panneau {
+    border-left: 0;
+    border-top: 1px solid var(--bordure);
+    border-radius: 20px 20px 0 0;
+  }
+  .colonne-simulation {
+    padding: 12px 16px;
+  }
+  .vue-simulation {
+    min-height: 420px;
+  }
+  .commandes__libelle {
+    display: none;
+  }
   .entete {
     padding: 8px 16px;
   }
   .selecteur-mode button {
     padding: 0 16px;
+  }
+  .libelle-long {
+    display: none;
+  }
+  .libelle-court {
+    display: inline;
   }
 }

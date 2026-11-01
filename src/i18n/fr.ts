@@ -25,6 +25,7 @@ export const fr = {
     parabole: 'parabole',
     presqueParabole: 'presque une parabole',
     hyperbole: 'hyperbole',
+    droite: 'droite',
     // Cas radial (décision D-01, docs/DECISIONS.md).
     droiteTombe: 'L’astre tombe droit sur le Soleil',
     droiteRetombe: 'L’astre monte, s’arrête puis retombe droit sur le Soleil',
@@ -41,6 +42,41 @@ export const fr = {
     zoomPlus: 'Zoomer',
     zoomMoins: 'Dézoomer',
     vitesseTemps: 'Vitesse du temps',
+    zoom: 'Zoom',
+  },
+
+  scene: {
+    soleil: 'Soleil',
+    astre: 'astre',
+    depart: 'départ',
+    /** Description textuelle du dessin (role="img"). */
+    description: (forme: string, distance: string, temps: string) =>
+      `Simulation : trajectoire ${forme}. L’astre est à ${distance} UA du Soleil, après ${temps} an.`,
+  },
+
+  mesures: {
+    distance: 'Distance',
+    vitesse: 'Vitesse',
+    temps: 'Temps écoulé',
+    ralenti: 'simulation ralentie',
+    ralentiDetail:
+      'Le calcul ne suit pas la vitesse demandée : le temps défile moins vite pour rester précis.',
+    precisionCorrecte: 'précision correcte',
+    precisionDegradee: 'précision réduite',
+    precisionDetail: (ecart: string) =>
+      `Écart d’énergie dû au calcul : ${ecart} (correct en dessous de 0,01 %).`,
+  },
+
+  fins: {
+    collision: 'Collision avec le Soleil',
+    sortie: 'L’astre s’éloigne pour toujours',
+  },
+
+  provisoire: {
+    titre: 'Choisis un astre',
+    terre: 'Terre',
+    ellipse: 'Ellipse de la maquette',
+    note: 'Les réglages complets arrivent au jalon J3.',
   },
 
   unites: {

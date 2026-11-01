@@ -12,6 +12,7 @@ import {
   parametreDepuisPeriapse,
   pointConique,
   positionJauge,
+  rayonMaxRadial,
   vCirc,
   vLib,
 } from './kepler';
@@ -180,6 +181,12 @@ describe('T-06 trajectoire droite (D-01)', () => {
       collision: false,
     });
     expect(classifier(lancer(1, vLib(1), 0))).toMatchObject({ issue: 'part' });
+  });
+  it('hauteur maximale : r_max = −μ/ε, infinie si ε ≥ 0', () => {
+    // Départ au repos à 2 UA : r_max = 2. Lancer vertical à v = v_circ(1) depuis 1 UA : r_max = 2.
+    expect(rayonMaxRadial(lancer(2, 0, 90))).toBeCloseTo(2, 12);
+    expect(rayonMaxRadial(lancer(1, vCirc(1), 0))).toBeCloseTo(2, 12);
+    expect(rayonMaxRadial(lancer(1, 9, 0))).toBe(Infinity);
   });
   it('pas de jauge pour une trajectoire droite', () => {
     expect(positionJauge(classifier(lancer(1, 6, 0)), 1)).toBeNull();

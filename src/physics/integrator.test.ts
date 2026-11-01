@@ -6,6 +6,7 @@ import { anomalieVraie, elements, rayonConique } from './kepler';
 import {
   type ReglagesMode1,
   avancerMode1,
+  avecPerihelieADroite,
   creerSystemeMode1,
   ecartEnergie,
   energieSpecifique,
@@ -252,6 +253,16 @@ describe('système N corps', () => {
   it('mode 1 : le Soleil reste fixe', () => {
     const s = avancerMode1(creerSystemeMode1(etatInitialMode1(ELLIPSE)), 0.5, -1).systeme;
     expect([s.pos[0], s.pos[1], s.vel[0], s.vel[1]]).toEqual([0, 0, 0, 0]);
+  });
+});
+
+describe('orientation d’affichage', () => {
+  it('avecPerihelieADroite : ω = 0, forme inchangée', () => {
+    const reg = avecPerihelieADroite(ELLIPSE);
+    const el = elements(etatInitialMode1(reg));
+    expect(Math.cos(el.omega)).toBeCloseTo(1, 12);
+    expect(el.e).toBeCloseTo(elements(etatInitialMode1(ELLIPSE)).e, 12);
+    expect(reg.r0).toBe(ELLIPSE.r0);
   });
 });
 

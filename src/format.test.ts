@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { format, formatAngle, formatExcentricite, parseNombre } from './format';
+import {
+  format,
+  formatAngle,
+  formatExcentricite,
+  formatMultiplicateur,
+  parseNombre,
+} from './format';
 
 // T-15 — Formatage et lecture des nombres fr-FR.
 describe('T-15 format', () => {
@@ -33,6 +39,10 @@ describe('T-15 format', () => {
     expect(formatExcentricite(0.967)).toBe('0,967');
     expect(formatExcentricite(1.004)).toBe('1,004');
     expect(formatExcentricite(0.95)).toBe('0,95');
+  });
+
+  it('multiplicateurs de vitesse du temps', () => {
+    expect([0.1, 1, 10, 100].map(formatMultiplicateur)).toEqual(['×0,1', '×1', '×10', '×100']);
   });
 
   it('angles : radians en entrée, degrés entiers en sortie', () => {

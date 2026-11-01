@@ -5,7 +5,7 @@
 import { R_COLLISION, R_SORTIE } from '../config';
 import { MU_SOLEIL } from './constants';
 import { type ResultatImage, avancerImage } from './integrator';
-import { type BodyState, type Sens, distanceMinEstimee } from './kepler';
+import { type BodyState, type Sens, distanceMinEstimee, elements } from './kepler';
 import { type SystemeNCorps, creerSysteme, etatCorps } from './nbody';
 import { add, cross, dot, norm, polar, scale } from './vec2';
 
@@ -49,6 +49,16 @@ export function reglagesDepuisEtat(etat: BodyState): ReglagesMode1 {
     sens: vt < 0 ? -1 : 1,
     phi0: Math.atan2(etat.r.y, etat.r.x),
   };
+}
+
+/**
+ * Mêmes réglages, avec la position de départ φ₀ tournée pour que le périhélie soit à droite du
+ * Soleil (ω = 0), comme sur les maquettes. Sans effet physique (rotation d'ensemble).
+ */
+export function avecPerihelieADroite(reg: ReglagesMode1): ReglagesMode1 {
+  const { omega } = elements(etatInitialMode1({ ...reg, phi0: 0 }));
+  const phi0 = Math.atan2(Math.sin(-omega), Math.cos(-omega));
+  return { ...reg, phi0 };
 }
 
 /** Indice des corps dans le système du mode 1. */

@@ -19,8 +19,17 @@ export function Entete({ mode, onMode, explications, onExplications }: EntetePro
       </div>
 
       <div className="selecteur-mode" role="group" aria-label={fr.entete.choixMode}>
-        <button type="button" aria-pressed={mode === 'mode1'} onClick={() => onMode('mode1')}>
-          {fr.entete.mode1}
+        <button
+          type="button"
+          aria-pressed={mode === 'mode1'}
+          aria-label={fr.entete.mode1}
+          onClick={() => onMode('mode1')}
+        >
+          {/* Libellé court sur tablette (maquette 4) ; le nom accessible reste complet. */}
+          <span className="libelle-long">{fr.entete.mode1}</span>
+          <span className="libelle-court" aria-hidden="true">
+            {fr.entete.mode1Court}
+          </span>
         </button>
         <button type="button" aria-pressed={mode === 'mode2'} onClick={() => onMode('mode2')}>
           {fr.entete.mode2}

@@ -50,6 +50,11 @@ export function formatAngle(radians: number): string {
   return format(radToDeg(radians), 0);
 }
 
+/** Multiplicateur de vitesse du temps : « ×0,1 », « ×10 ». */
+export function formatMultiplicateur(m: number): string {
+  return `×${format(m, Number.isInteger(m) ? 0 : 1)}`;
+}
+
 const NOMBRE = /^[+-]?(\d+(\.\d*)?|\.\d+)$/;
 
 /**
