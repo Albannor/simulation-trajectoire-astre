@@ -68,8 +68,10 @@ export interface ResultatImage<E> {
 }
 
 /**
- * Avance le système d'une image de durée `dureeImage` (an). `arret` est évalué après chaque
- * sous-pas ; s'il renvoie un événement, l'intégration s'arrête immédiatement (D-15).
+ * Avance le système d'une image de durée `dureeImage` (an). Après chaque sous-pas, `surSousPas`
+ * est appelé (échantillonnage des traces, mesures fines), puis `arret` est évalué ; s'il renvoie
+ * un événement, l'intégration s'arrête immédiatement (D-15). Les fonctions de rappel reçoivent la
+ * copie de travail en lecture seule : elles ne doivent pas la modifier.
  */
 export function avancerImage<E>(
   systeme: SystemeNCorps,
@@ -77,6 +79,7 @@ export function avancerImage<E>(
   dMin: number,
   gMasseTotale: number,
   arret?: (s: SystemeNCorps) => E | null,
+  surSousPas?: (s: Readonly<SystemeNCorps>) => void,
 ): ResultatImage<E> {
   const s = copierSysteme(systeme);
   const choix = choisirPas(dureeImage, dMin, gMasseTotale);
@@ -86,6 +89,7 @@ export function avancerImage<E>(
   while (k < choix.sousPas) {
     pasSauteMouton(s, choix.dt);
     k++;
+    surSousPas?.(s);
     evenement = arret ? arret(s) : null;
     if (evenement !== null) break;
   }

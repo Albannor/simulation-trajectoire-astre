@@ -22,9 +22,14 @@ import { cross, dot, norm } from './vec2';
 /*
  * Toutes les simulations reproduisent le découpage de l'animation : images de TEMPS_X1·k/60 an,
  * pas adaptatif choisi en début d'image (ETA = 0,002). Chaque test est mené à ×1 et à ×100.
+ * Les maxima sont relevés après **chaque sous-pas** (et non en fin d'image, ce qui manquait le
+ * pic d'erreur au périhélie : Halley ×100, 3,1e-5 relevé par image contre 5,7e-5 au sous-pas).
  * Les tolérances « à calibrer » (§ 9.1) ont été mesurées le 2026-11-01 ; la valeur mesurée
- * figure en commentaire et la tolérance retenue laisse une marge d'environ ×10, sans jamais
- * dépasser la valeur de la spécification.
+ * figure en commentaire ; la tolérance retenue laisse une marge de ×5 à ×36 sur le pire cas
+ * mesuré, sans jamais dépasser la valeur de la spécification.
+ *
+ * Note : à ×1, les images (1/600 an) sont plus courtes que le pas exigé par ETA loin du Soleil ;
+ * la simulation y est donc plus précise qu'à ×100, qui reflète la précision propre à ETA.
  */
 
 const TERRE: ReglagesMode1 = { r0: 1, v0: 2 * Math.PI, theta: Math.PI / 2, sens: 1, phi0: 0 };
@@ -36,8 +41,10 @@ describe('T-02 un tour de la Terre', () => {
     const depart = etatInitialMode1(TERRE);
     const e0 = energieSpecifique(depart);
     let derive = 0;
-    const { systeme } = simulerMode1(depart, e0, 1, k, (etat) => {
-      derive = Math.max(derive, Math.abs((energieSpecifique(etat) - e0) / e0));
+    const { systeme } = simulerMode1(depart, e0, 1, k, {
+      sousPas: (etat) => {
+        derive = Math.max(derive, Math.abs((energieSpecifique(etat) - e0) / e0));
+      },
     });
     expect(systeme.t).toBeCloseTo(1, 10);
     const fin = etatAstre(systeme);
@@ -54,14 +61,16 @@ describe('T-07 conservation sur 10 orbites (e = 0,6)', () => {
     const el = elements(depart);
     let dE = 0;
     let dh = 0;
-    simulerMode1(depart, el.energie, 10 * el.periode!, k, (etat) => {
-      dE = Math.max(dE, Math.abs((energieSpecifique(etat) - el.energie) / el.energie));
-      dh = Math.max(dh, Math.abs((cross(etat.r, etat.v) - el.h) / el.h));
+    simulerMode1(depart, el.energie, 10 * el.periode!, k, {
+      sousPas: (etat) => {
+        dE = Math.max(dE, Math.abs((energieSpecifique(etat) - el.energie) / el.energie));
+        dh = Math.max(dh, Math.abs((cross(etat.r, etat.v) - el.h) / el.h));
+      },
     });
-    // Mesuré : 2,1e-6 (×1) ; 6,8e-6 (×100). Spécification : < 1e-4 → tolérance 5e-5.
+    // Mesuré : 2,1e-6 (×1) ; 7,0e-6 (×100). Spécification : < 1e-4 → tolérance 5e-5.
     expect(dE).toBeLessThan(5e-5);
     // Le saute-mouton conserve h exactement (force centrale) aux arrondis près.
-    // Mesuré : 2,2e-14 (×1) ; 2,8e-14 (×100). Spécification : < 1e-6 → tolérance 1e-12.
+    // Mesuré : 2,2e-14 (×1) ; 2,9e-14 (×100). Spécification : < 1e-6 → tolérance 1e-12.
     expect(dh).toBeLessThan(1e-12);
   });
 });
@@ -72,29 +81,35 @@ describe('T-08 Halley sur une orbite', () => {
 
   it.each(MULTIPLICATEURS)('×%d : |ΔE/E| < 3e-4', (k) => {
     let dE = 0;
-    simulerMode1(depart, el.energie, el.periode!, k, (etat) => {
-      dE = Math.max(dE, Math.abs((energieSpecifique(etat) - el.energie) / el.energie));
+    simulerMode1(depart, el.energie, el.periode!, k, {
+      sousPas: (etat) => {
+        dE = Math.max(dE, Math.abs((energieSpecifique(etat) - el.energie) / el.energie));
+      },
     });
-    // Mesuré : 4,2e-5 (×1) ; 3,1e-5 (×100). Spécification : < 1e-3 → tolérance 3e-4.
+    // Mesuré : 4,2e-5 (×1) ; 5,7e-5 (×100). Spécification : < 1e-3 → tolérance 3e-4.
     expect(dE).toBeLessThan(3e-4);
   });
 
-  it('×1 : période simulée = a^(3/2) à 1e-5 près', () => {
-    // Retour au périhélie : r⃗·v⃗ passe de négatif à positif ; interpolation linéaire entre images.
+  it.each(MULTIPLICATEURS)('×%d : période simulée = a^(3/2) à 3e-4 près', (k) => {
+    // Retour au périhélie : r⃗·v⃗ passe de négatif à positif entre deux sous-pas ; interpolation
+    // linéaire sur ce seul sous-pas (≤ 1,5e-4 an), quelle que soit la durée de l'image.
     let precedent = dot(depart.r, depart.v);
     let tPrecedent = 0;
     let periode: number | null = null;
-    simulerMode1(depart, el.energie, 1.1 * el.periode!, 1, (etat, s) => {
-      const rv = dot(etat.r, etat.v);
-      if (periode === null && s.t > el.periode! / 2 && precedent < 0 && rv >= 0) {
-        periode = tPrecedent + ((s.t - tPrecedent) * -precedent) / (rv - precedent);
-      }
-      precedent = rv;
-      tPrecedent = s.t;
+    simulerMode1(depart, el.energie, 1.1 * el.periode!, k, {
+      sousPas: (etat, s) => {
+        const rv = dot(etat.r, etat.v);
+        if (periode === null && s.t > el.periode! / 2 && precedent < 0 && rv >= 0) {
+          periode = tPrecedent + ((s.t - tPrecedent) * -precedent) / (rv - precedent);
+        }
+        precedent = rv;
+        tPrecedent = s.t;
+      },
     });
     expect(periode).not.toBeNull();
-    // Mesuré : écart relatif 1,3e-6. Spécification : 0,5 % → tolérance 1e-5.
-    expect(Math.abs(periode! - el.a ** 1.5) / el.a ** 1.5).toBeLessThan(1e-5);
+    // Mesuré : 1,3e-6 (×1) ; 4,1e-5 (×100, précision propre à ETA — voir la note en tête).
+    // Spécification : 0,5 % → tolérance 3e-4 (l'ancienne valeur 1e-5 ne valait que pour ×1).
+    expect(Math.abs(periode! - el.a ** 1.5) / el.a ** 1.5).toBeLessThan(3e-4);
   });
 });
 
@@ -104,11 +119,13 @@ describe('T-09 cohérence prévision / simulation (ellipse e = 0,6, 1 tour)', ()
     const el = elements(depart);
     let ecart = 0;
     let n = 0;
-    simulerMode1(depart, el.energie, el.periode!, k, (etat) => {
-      // Écart radial à la conique analytique au même angle polaire (majore la distance à la courbe).
-      const nu = anomalieVraie(el, etat.r);
-      ecart = Math.max(ecart, Math.abs(norm(etat.r) - rayonConique(el.p, el.e, nu)));
-      n++;
+    simulerMode1(depart, el.energie, el.periode!, k, {
+      sousPas: (etat) => {
+        // Écart radial à la conique analytique au même angle polaire (majore la distance à la courbe).
+        const nu = anomalieVraie(el, etat.r);
+        ecart = Math.max(ecart, Math.abs(norm(etat.r) - rayonConique(el.p, el.e, nu)));
+        n++;
+      },
     });
     expect(n).toBeGreaterThan(10);
     // Mesuré : 2,7e-6 (×1) ; 1,9e-6 (×100). Spécification : < 1e-3 (non « à calibrer », conservée).

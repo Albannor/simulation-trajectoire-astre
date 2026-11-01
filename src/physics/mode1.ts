@@ -85,10 +85,16 @@ export function avancerMode1(
   s: SystemeNCorps,
   dureeImage: number,
   energieInitiale: number,
+  surSousPas?: (s: Readonly<SystemeNCorps>) => void,
 ): ResultatImage<FinMode1> {
   const dMin = distanceMinEstimee(etatAstre(s), MU_SOLEIL);
-  return avancerImage(s, dureeImage, dMin, MU_SOLEIL, (sys) =>
-    finMode1(etatAstre(sys), energieInitiale),
+  return avancerImage(
+    s,
+    dureeImage,
+    dMin,
+    MU_SOLEIL,
+    (sys) => finMode1(etatAstre(sys), energieInitiale),
+    surSousPas,
   );
 }
 
