@@ -1,0 +1,15 @@
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import './fonts';
+import './styles/theme.css';
+import './styles/app.css';
+import { App } from './App';
+
+const racine = document.getElementById('racine');
+if (!racine) throw new Error('Élément #racine introuvable');
+
+createRoot(racine).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+);

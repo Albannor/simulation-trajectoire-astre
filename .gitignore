@@ -1,0 +1,23 @@
+# Dépendances et builds
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+
+# Journaux
+*.log
+npm-debug.log*
+
+# Environnement
+.env
+.env.*
+
+# Éditeurs
+.vscode/
+.idea/
+*.swp
+*~
+
+# Système
+.DS_Store
+Thumbs.db

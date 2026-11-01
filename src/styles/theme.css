@@ -1,0 +1,82 @@
+/* Charte graphique extraite des maquettes (spécifications § 7.2). */
+:root {
+  --fond-app: #070b17;
+  --fond-simulation: #050813;
+  --fond-entete: #0d1428;
+  --fond-panneau: #0f1730;
+  --fond-carte: #19233f;
+  --fond-bulle: #1f2c52;
+  --bordure-bulle: #3b4c7e;
+  --bordure: #223056;
+  --bordure-forte: #2f3f6c;
+  --texte: #eaf0ff;
+  --texte-secondaire: #aab8da;
+  --accent: #ffc857;
+  --texte-sur-accent: #0a0f1e;
+
+  --couleur-cercle: #5fd9b4;
+  --couleur-ellipse: #6fa8ff;
+  --couleur-parabole: #ffc857;
+  --couleur-hyperbole: #ff8a5b;
+  --couleur-corps-a: #5cd0f0;
+  --couleur-corps-b: #ff8a5b;
+
+  --police-titre: 'Bricolage Grotesque', system-ui, sans-serif;
+  --police-texte: 'Figtree', system-ui, sans-serif;
+  --police-nombre: 'IBM Plex Mono', ui-monospace, monospace;
+
+  --rayon-carte: 14px;
+  --rayon-pilule: 999px;
+  --cible-tactile: 44px;
+
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#racine {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--fond-app);
+  color: var(--texte);
+  font-family: var(--police-texte);
+  font-size: 16px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--police-titre);
+  font-weight: 700;
+  margin: 0;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}

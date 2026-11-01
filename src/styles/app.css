@@ -1,0 +1,119 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 24px;
+  background: var(--fond-entete);
+  border-bottom: 1px solid var(--bordure);
+}
+
+.entete__marque {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.6rem;
+}
+
+.selecteur-mode {
+  display: flex;
+  padding: 4px;
+  border: 1px solid var(--bordure-forte);
+  border-radius: var(--rayon-pilule);
+  background: var(--fond-app);
+}
+
+.selecteur-mode button {
+  min-height: var(--cible-tactile);
+  padding: 0 22px;
+  border: 0;
+  border-radius: var(--rayon-pilule);
+  background: transparent;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.selecteur-mode button[aria-pressed='true'] {
+  background: var(--accent);
+  color: var(--texte-sur-accent);
+}
+
+.entete__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.interrupteur {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--cible-tactile);
+  padding: 0 4px;
+  border: 0;
+  background: transparent;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.interrupteur__piste {
+  position: relative;
+  width: 52px;
+  height: 28px;
+  border-radius: var(--rayon-pilule);
+  background: var(--bordure-forte);
+}
+
+.interrupteur__piste::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--texte);
+  transition: transform 0.15s;
+}
+
+.interrupteur[aria-checked='true'] .interrupteur__piste {
+  background: var(--accent);
+}
+
+.interrupteur[aria-checked='true'] .interrupteur__piste::after {
+  transform: translateX(24px);
+  background: var(--texte-sur-accent);
+}
+
+.bouton-rond {
+  width: var(--cible-tactile);
+  height: var(--cible-tactile);
+  border: 1px solid var(--bordure-forte);
+  border-radius: 50%;
+  background: transparent;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.contenu {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  background: var(--fond-simulation);
+  color: var(--texte-secondaire);
+}
+
+@media (max-width: 1099px) {
+  .entete {
+    padding: 8px 16px;
+  }
+  .selecteur-mode button {
+    padding: 0 16px;
+  }
+}
